@@ -1,4 +1,4 @@
-package csf.itesm.mx.adh_socios;
+package csf.itesm.mx.adhsocios;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
