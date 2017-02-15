@@ -4,7 +4,9 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,9 +18,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.android.volley.RequestQueue;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -27,15 +26,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import csf.itesm.mx.adhsocios.R;
+import csf.itesm.mx.adhsocios.Requester;
+import csf.itesm.mx.adhsocios.Utils.JSONParser;
+import csf.itesm.mx.adhsocios.models.Datos_Model;
+import io.realm.Realm;
 
-//TODO : Creaate JSONParser
+//TODO : Create JSONParser
 //TODO : Constantes de URLs
-//TODO : LAYOUTs
-//TODO : Add Realm
-//TODO : VOLLEYS es el singleton que realiza requests
-//TODO : Datos_Model funciona con realm, como funciona esa madre?
+//TODO : LAYOUTs -> Crear widgets
 
 public class LoginActivity extends AppCompatActivity
 {
@@ -60,15 +62,11 @@ public class LoginActivity extends AppCompatActivity
 
     private static Button botonEnviarCorreo;
 
-    private VolleyS volley;
-
     private String[] blogTitles;
 
     private Realm realm;
 
     private String blog;
-
-    protected RequestQueue fRequestQueue;
 
     final Context context = this;
 
@@ -213,8 +211,7 @@ public class LoginActivity extends AppCompatActivity
                 pdia.show();
             }
         });
-        volley = VolleyS.getInstance(this.getApplicationContext());
-        fRequestQueue = volley.getRequestQueue();
+        //Requester.getInstance().addToRequestQueue();
     }
 
     public void Verifuser(){
@@ -259,7 +256,8 @@ public class LoginActivity extends AppCompatActivity
                 urlConnection.setRequestMethod("GET");
                 int statusCode = urlConnection.getResponseCode();
 
-                if (statusCode ==  200) {
+                if (statusCode ==  200)
+                {
                     result = 1; // Successful
                     inputStream = new BufferedInputStream(urlConnection.getInputStream());
                     JSONParser jsonParser = new JSONParser();
