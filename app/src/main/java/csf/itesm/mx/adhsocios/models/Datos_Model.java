@@ -22,6 +22,8 @@ public class Datos_Model extends RealmObject
     private String NmComplete;
     private boolean Logged;
 
+    public Datos_Model(){};
+
     public Datos_Model(int id,String firtname, String lastname, String estatura, String gender, String companyid, String associateimage, String associateId, String nmComplete, boolean logged)
     {
         this.id = id;
