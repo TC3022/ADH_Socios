@@ -1,4 +1,5 @@
 <resources>
+    <string name="api_host">http://201.122.77.1:8085/api/json/</string>
     <string name="app_name">ADH_Socios</string>
     <string name="username_hint">Usuario</string>
     <string name="login_button_text">Login</string>

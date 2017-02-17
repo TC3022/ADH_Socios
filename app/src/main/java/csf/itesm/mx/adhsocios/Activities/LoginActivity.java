@@ -19,10 +19,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.apradanas.simplelinkabletext.LinkableEditText;
 import com.apradanas.simplelinkabletext.LinkableTextView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
@@ -32,6 +38,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,6 +60,11 @@ public class LoginActivity extends AppCompatActivity
 
     private static final String TAG = "LOGIN";
 
+    private static final String ep_recoverPassword="SetRecoverPassword?email=%s&companyid=%s"; //String.format( Esto, valor1,valor2)
+    private static final String ep_associateInfo="BasicAsociateInfo?email=%s";
+
+    static final String regex_email = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -70,7 +83,7 @@ public class LoginActivity extends AppCompatActivity
             {
                 final Dialog dialog = new Dialog( LoginActivity.this );
                 dialog.setContentView(R.layout.dialog_forgotten_password);
-                dialog.setTitle(getResources().getString(R.string.forgottenPwdTitle));
+                dialog.setTitle(getString(R.string.forgottenPwdTitle));
 
                 Button button = (Button) dialog.findViewById(R.id.bttn_dismiss_fgtPwd);
                 button.setOnClickListener(new View.OnClickListener()
@@ -120,9 +133,7 @@ public class LoginActivity extends AppCompatActivity
 
     public void VerifyEmail(String email)
     {
-        String CorreoRecuperar = "email="+email;
-
-        if (email.trim().equals(""))
+        if (!email.matches(regex_email))
         {
             //Enviar mensaje que debe ingresar correo
             AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
@@ -139,12 +150,104 @@ public class LoginActivity extends AppCompatActivity
         }
         else
         {
-            //MANDAR LA REQUEST USANDO VOLLEY
-
-            //String url = URLS.GET_BASIC_ASOCIATE_INFO + CorreoRecuperar;
-            //Log.e(TAG, url);
-            //new AsyncHttpTaskEmail().execute(url);
+            prepareToSendEmail(email); //Esta cosa obtiene el CompanyId y despues invoca SendEmail()
         }
+    }
+    //El endpoint se diseno para que tengas que obtener primero empresa y luego mandar correo
+    void prepareToSendEmail(final String email)
+    {
+        String url = getResources().getString(R.string.api_host) + String.format(ep_associateInfo, email);
+        Log.d(TAG,url);
+        JsonArrayRequest preResetPwd = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response)
+            {
+                try
+                {
+                    JSONObject resp = response.getJSONObject(0); //Hecha delav el endpoint then hacemos esto
+                    if (  resp.getString("Code").equals("01"))  //Supongo que 01 es exito
+                    {
+                        Long companyId = response.getJSONObject(1).getLong("IdEmpresa");
+                        sendEmail(email,companyId);
+                    }
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+            }
 
+        }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError
+            {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Basic amF2aWVyOjEyMw=="); //BIEN NACO HARDCODEADO
+                return headers;
+            }
+        };
+        Requester.getInstance().addToRequestQueue(preResetPwd);
+    }
+
+    //Le pega al endpoint para mandar un correo
+    void sendEmail(String email,Long companyId)
+    {
+        String url = getResources().getString(R.string.api_host) + String.format(ep_recoverPassword,email,companyId);
+        Log.d(TAG,url);
+        JsonArrayRequest resetPwd = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>()
+        {
+            @Override
+            public void onResponse(JSONArray response)
+            {
+                try
+                {
+                    JSONObject resp = response.getJSONObject(0); //Hecha delav el endpoint then hacemos esto
+                    if (  resp.getString("Code").equals("01"))  //Supongo que 01 es exito
+                    {
+                        //TODO
+                        //FUE EXITOSO, AVISAR CON UN MENSAJE O ALGO, EN ESTE PUNTO
+                        //UNO DEBE ESPERAR A QUE LE LLEGUE EL CORREO, AQUI SE DEBE DE PRESENTAR UNA VISTA
+                        //CON 3 CAMPOS
+                            //UNO PARA CODIGO ENVIADO POR CORREO
+                            //UNO PARA NUEVA CONTRA
+                            //UNO PARA CONFIRMAR NUEVA CONTRA
+                        //SI COINCIDEN CONTRASEÑAS PEGARLE AL ENDPOINT DE GET_RECOVER_CODE QUE CAMBIARA LA CONTRASEÑA
+                    }
+                    else
+                    {
+                        //ALGO FRACASO
+                    }
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+        }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError
+            {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Basic amF2aWVyOjEyMw=="); //BIEN NACO HARDCODEADO
+                return headers;
+            }
+        };
+
+        Requester.getInstance().addToRequestQueue(resetPwd);
     }
 }
