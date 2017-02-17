@@ -49,9 +49,12 @@ import csf.itesm.mx.adhsocios.Utils.JSONParser;
 import csf.itesm.mx.adhsocios.models.Datos_Model;
 import io.realm.Realm;
 
-//TODO : Create JSONParser
-//TODO : Constantes de URLs
-//TODO : LAYOUTs -> Crear widgets
+//TODO CAMBIAR IDIOMA
+//TODO LOGIN CON ENDPOINT
+    //TODO GUARDAR RESULTADO DE LOGIN EN BASE REALM
+    //TODO OBTENER USUARIO EN REALM DESDE OTRA ACTIVIDAD
+//TODO AGREGAR NUEVAS PANTALLAS
+//TODO FINALIZAR EL PROCESO DE CAMBIO DE PASSWORD
 
 public class LoginActivity extends AppCompatActivity
 {
