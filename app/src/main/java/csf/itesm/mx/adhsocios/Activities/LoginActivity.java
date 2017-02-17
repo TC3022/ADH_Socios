@@ -1,43 +1,26 @@
 package csf.itesm.mx.adhsocios.Activities;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Rect;
-import android.net.Uri;
-import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.apradanas.simplelinkabletext.LinkableEditText;
 import com.apradanas.simplelinkabletext.LinkableTextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,28 +28,30 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import csf.itesm.mx.adhsocios.R;
 import csf.itesm.mx.adhsocios.Requester;
-import csf.itesm.mx.adhsocios.Utils.JSONParser;
-import csf.itesm.mx.adhsocios.models.Datos_Model;
-import io.realm.Realm;
 
+//TODO FINALIZAR EL PROCESO DE CAMBIO DE PASSWORD
+//TODO Agregar XML de estilos/Colores/Imagenes de estos weyes (https://www.materialpalette.com)
 //TODO CAMBIAR IDIOMA
 //TODO LOGIN CON ENDPOINT
     //TODO GUARDAR RESULTADO DE LOGIN EN BASE REALM
     //TODO OBTENER USUARIO EN REALM DESDE OTRA ACTIVIDAD
-//TODO AGREGAR NUEVAS PANTALLAS
-//TODO FINALIZAR EL PROCESO DE CAMBIO DE PASSWORD
+//TODO Disenar nuevas pantallas
+    //TODO Agregar Nuevas Pantallas
+
+
 
 public class LoginActivity extends AppCompatActivity
 {
     @BindView(R.id.hyperlinkPrivacyPolicy) LinkableTextView hlink_policy;
     @BindView(R.id.hyperlinkForgottenPwd) LinkableTextView  hlink_f_password;
+    @BindView(R.id.login_username) EditText input_username;
+    @BindView(R.id.login_password) EditText input_password;
+    @BindView(R.id.login_button) Button bttn_login;
 
     private static final String TAG = "LOGIN";
-
-    private static final String ep_recoverPassword="SetRecoverPassword?email=%s&companyid=%s"; //String.format( Esto, valor1,valor2)
+    private static final String ep_recoverPassword="SetRecoverPassword?email=%s&companyid=%s";
     private static final String ep_associateInfo="BasicAsociateInfo?email=%s";
-
-    static final String regex_email = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
+    private static final String regex_email = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -225,7 +210,7 @@ public class LoginActivity extends AppCompatActivity
                     }
                     else
                     {
-                        //ALGO FRACASO
+                        //ALGO FRACASO, decirle que no mame
                     }
                 }
                 catch (JSONException e)
