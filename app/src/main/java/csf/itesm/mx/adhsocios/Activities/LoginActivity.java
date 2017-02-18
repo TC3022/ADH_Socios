@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -188,11 +189,13 @@ public class LoginActivity extends AppCompatActivity
                         else
                         {
                             //TODO Mostrar aviso de privacidad , si le da click en aceptar pegarle al endpoint para que lo actualice y lo deje logear
+                            Toast.makeText(LoginActivity.this,"Debes aceptar el aviso de privacidad",Toast.LENGTH_LONG).show();
                         }
                     }
                     else
                     {
                         //TODO Marcar que usuario/contraseña no son valdias
+                        Toast.makeText(LoginActivity.this,"Usuario y contraseña invalidos",Toast.LENGTH_LONG).show();
                     }
 
                 }
