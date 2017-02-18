@@ -25,7 +25,8 @@ import csf.itesm.mx.adhsocios.R;
 import csf.itesm.mx.adhsocios.models.Datos_Model;
 import io.realm.Realm;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private static final String TAG = "Main";
 
+    private Datos_Model user;
+    private Realm mRealm;
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -50,13 +53,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //IMPORTANTE, ESTO ES LO QUE YO AGREGUE
-        Realm mRealm = Realm.getDefaultInstance();
-        Datos_Model user = mRealm.where(Datos_Model.class).findFirst();
+        mRealm = Realm.getDefaultInstance();
+        user = mRealm.where(Datos_Model.class).findFirst();
         if ( user == null ) //Not Logged, enviar al login
-        {
-            startActivity(new Intent().setClass(MainActivity.this, LoginActivity.class)); //Llamar Login
-            finish();                                                                     //Y matar main
-        }
+            askToLogin();
+
         Log.d(TAG, String.format("%s %s %sm",user.getAssociateId(),user.getNmComplete(),user.getEstatura()) );
 
 
@@ -85,6 +86,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    void askToLogin()
+    {
+        startActivity(new Intent().setClass(MainActivity.this, LoginActivity.class)); //Llamar Login
+        finish();                                                                     //Y matar main
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -98,13 +104,14 @@ public class MainActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId())
+        {
+            case R.id.action_logout:
+                mRealm.clear(Datos_Model.class); //Quitar registro del ususuario loggeado
+                user = null;                     //Asegurar que lo dejamos nulo
+                askToLogin();                    //Matar esta actividad y abrir login
+                return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
