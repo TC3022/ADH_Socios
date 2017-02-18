@@ -56,8 +56,10 @@ public class MainActivity extends AppCompatActivity
         mRealm = Realm.getDefaultInstance();
         user = mRealm.where(Datos_Model.class).findFirst();
         if ( user == null ) //Not Logged, enviar al login
+        {
             askToLogin();
-
+            return;
+        }
         Log.d(TAG, String.format("%s %s %sm",user.getAssociateId(),user.getNmComplete(),user.getEstatura()) );
 
 
@@ -107,7 +109,9 @@ public class MainActivity extends AppCompatActivity
         switch (item.getItemId())
         {
             case R.id.action_logout:
-                mRealm.clear(Datos_Model.class); //Quitar registro del ususuario loggeado
+                mRealm.beginTransaction();
+                    mRealm.clear(Datos_Model.class); //Quitar registro del ususuario loggeado
+                mRealm.commitTransaction();
                 user = null;                     //Asegurar que lo dejamos nulo
                 askToLogin();                    //Matar esta actividad y abrir login
                 return true;
