@@ -22,12 +22,14 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         Realm mRealm = Realm.getDefaultInstance();
-        Datos_Model rr = mRealm.where(Datos_Model.class).findFirst();
-
-        if ( rr == null ) //Not Logged, enviar al login
+        Datos_Model user = mRealm.where(Datos_Model.class).findFirst();
+        if ( user == null ) //Not Logged, enviar al login
         {
             startActivity(new Intent().setClass(MainActivity.this, LoginActivity.class)); //Llamar Login
             finish();                                                                     //Y matar main
         }
+
+
+        Log.d(TAG, String.format("%s %s %sm",user.getAssociateId(),user.getNmComplete(),user.getEstatura()) );
     }
 }
