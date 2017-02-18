@@ -1,6 +1,7 @@
 package csf.itesm.mx.adhsocios.Activities;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -59,11 +60,23 @@ public class LoginActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
-        setHyperlinks();
+        setButtons();
     }
 
-    void setHyperlinks()
+    void setButtons()
     {
+        bttn_login.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                String username = input_username.getText().toString();
+                String password = input_password.getText().toString();
+                if ( username.length()!=0 && password.length()!=0 ) //No sabemos con que mas validar
+                    login(username,password);
+            }
+        });
+
         hlink_f_password.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -117,6 +130,16 @@ public class LoginActivity extends AppCompatActivity
                 dialog.show();
             }
         });
+    }
+    public void login(String username,String password)
+    {
+        ProgressDialog pdia = new ProgressDialog(LoginActivity.this);
+        pdia.setMessage("Autentificando...");
+        pdia.show();
+
+                
+
+
     }
 
     public void VerifyEmail(String email)
