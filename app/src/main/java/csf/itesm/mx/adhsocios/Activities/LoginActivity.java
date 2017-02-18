@@ -3,6 +3,7 @@ package csf.itesm.mx.adhsocios.Activities;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -180,9 +181,9 @@ public class LoginActivity extends AppCompatActivity
                                 Datos_Model realm_datos = mRealm.copyToRealm(datos_usuario);
                             mRealm.commitTransaction();
 
-                            //En este punto donde salio exitoso lo mandariamos a la MainActivity
-                            //El codigo pide que le hagamos una encuesta pero nel
-                            //TODO Mandar a Main Activity
+                            //TODO El codigo pide que le hagamos una encuesta pero nel
+                            startActivity(new Intent().setClass(LoginActivity.this,MainActivity.class)); //Llamar Main
+                            finish();                                                                    //Y matar Login
                         }
                         else
                         {

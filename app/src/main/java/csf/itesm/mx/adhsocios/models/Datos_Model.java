@@ -14,9 +14,9 @@ public class Datos_Model extends RealmObject
 
     private String Firtname;
     private String Lastname;
-    private Double Estatura;
+    private double Estatura;
     private String Gender;
-    private Long Companyid;
+    private long Companyid;
     private String Associateimage;
     private String AssociateId;
     private String NmComplete;
@@ -24,7 +24,7 @@ public class Datos_Model extends RealmObject
 
     public Datos_Model(){};
 
-    public Datos_Model(int id,String firtname, String lastname, Double estatura, String gender, Long companyid, String associateimage, String associateId, String nmComplete, boolean logged)
+    public Datos_Model(int id,String firtname, String lastname, double estatura, String gender, long companyid, String associateimage, String associateId, String nmComplete, boolean logged)
     {
         this.id = id;
         Firtname = firtname;
@@ -70,11 +70,11 @@ public class Datos_Model extends RealmObject
         Associateimage = associateimage;
     }
 
-    public Long getCompanyid() {
+    public long getCompanyid() {
         return Companyid;
     }
 
-    public void setCompanyid(Long companyid) {
+    public void setCompanyid(long companyid) {
         Companyid = companyid;
     }
 
@@ -86,11 +86,11 @@ public class Datos_Model extends RealmObject
         Gender = gender;
     }
 
-    public Double getEstatura() {
+    public double getEstatura() {
         return Estatura;
     }
 
-    public void setEstatura(Double estatura) {
+    public void setEstatura(double estatura) {
         Estatura = estatura;
     }
 
