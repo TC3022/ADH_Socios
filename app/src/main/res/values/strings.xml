@@ -1,7 +1,7 @@
 <resources>
     <string name="api_host">http://201.122.77.1:8085/api/json/</string>
     <string name="app_name">ADH_Socios</string>
-    <string name="username_hint">Usuario</string>
+    <string name="username_hint">User</string>
     <string name="login_button_text">Login</string>
     <string name="password_hint">Password</string>
     <string name="here"><u>here</u></string>
@@ -9,13 +9,17 @@
     <string name="msg_after_here">to recover it</string>
     <string name="hyperlinkPrivacyPolicy"><u>Privacy Policy</u></string>
     <string name="ok">ok</string>
+    <string name="authenticating">Loading...</string>
     <string name="PrivacyPolicy">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse eget enim eu tellus porttitor vehicula at vel lacus. Proin sed elit tincidunt, vestibulum leo quis, pharetra odio. Proin aliquet, nisl ac vulputate fermentum, justo lorem sagittis nisi, a pharetra ipsum nibh sit amet mi. Vestibulum luctus eros libero, at posuere ipsum dignissim sit amet. Morbi tellus ligula, consequat in varius ac, finibus eget massa. Fusce mattis a lorem ac vehicula. Suspendisse potenti. Nullam tincidunt tincidunt aliquet. Donec quam velit, efficitur sit amet blandit eget, mattis eu elit. Vestibulum sit amet turpis diam.  Quisque feugiat euismod ex, vitae pharetra arcu. Fusce in purus libero. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Cras vel tincidunt dui. Nulla ullamcorper, nunc at pretium cursus, dolor velit fermentum odio, in egestas lacus nisi in tellus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Aenean nec ipsum ut velit efficitur volutpat id sit amet eros. Curabitur quis ex lorem.</string>
     <string name="privacyPolicyTitle">Privacy Policy</string>
     <string name="forgottenPwdTitle">Forgot your Password?</string>
     <string name="forgotPasswordText">Please insert the email that you used during Sign Up, we\'ll send you a link to change it</string>
-    <string name="dismiss">Volver</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="accept">Accept</string>
     <string name="send">Send</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="action_logout">Logout</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="msg_wrong_user_password">Wrong User/Password</string>
+    <string name="mustAcceptPP">You must accept de Privacy Policy</string>
 </resources>
