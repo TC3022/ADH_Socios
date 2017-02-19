@@ -22,4 +22,10 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="msg_wrong_user_password">Wrong User/Password</string>
     <string name="mustAcceptPP">You must accept de Privacy Policy</string>
+    <string name="change_password_title">Change password</string>
+    <string name="password_confirm_hint">Confirm Password</string>
+    <string name="sentCodeHint">Sent Code</string>
+    <string name="passwords_match_error">Passwords do not match</string>
+    <string name="change_password_success">Your new password was set succesfully</string>
+    <string name="change_password_fail">Error changing password, contact the admin</string>
 </resources>

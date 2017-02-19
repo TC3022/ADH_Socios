@@ -34,8 +34,6 @@ import csf.itesm.mx.adhsocios.Requester;
 import csf.itesm.mx.adhsocios.models.User;
 import io.realm.Realm;
 
-//TODO FINALIZAR EL PROCESO DE CAMBIO DE PASSWORD
-
 //TODO Agregar XML de estilos/Colores/Imagenes de estos weyes (https://www.materialpalette.com)
 
 //TODO CAMBIAR IDIOMA
@@ -60,6 +58,7 @@ public class LoginActivity extends AppCompatActivity
     private static final String ep_associateInfo="BasicAsociateInfo?email=%s";
     private static final String ep_getLogin="GetLogin?username=%s&password=%s";
     private static final String ep_setPrivacyFlag="SetPrivacyFlagStatus?associateId=%s&companyId=%s&privacyFlag=%s";
+    private static final String ep_setPassword = "GetRecoverCodeValidator?code=%s&password=%s&companyid=%s";
 
     private static final String regex_email = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
 
@@ -129,14 +128,10 @@ public class LoginActivity extends AppCompatActivity
                 dialog.setContentView(R.layout.dialog_aviso_privacidad);
                 dialog.setTitle( getResources().getString(R.string.privacyPolicyTitle) );
                 Button button = (Button) dialog.findViewById(R.id.bttn_closePrivacyPolicy);
-                button.setOnClickListener(new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View view)
-                    {
-                        dialog.dismiss();
-                    }
-                });
+                Button button2 = (Button) dialog.findViewById(R.id.bttn_acceptPrivacyPolicy);
+                View.OnClickListener dms = new View.OnClickListener() {@Override public void onClick(View view){dialog.dismiss();}};
+                button.setOnClickListener(dms);
+                button2.setOnClickListener(dms);
                 dialog.show();
             }
         });
@@ -361,7 +356,7 @@ public class LoginActivity extends AppCompatActivity
         Requester.getInstance().addToRequestQueue(preResetPwd);
     }
     //Le pega al endpoint para mandar un correo
-    void sendEmail(String email,Long companyId)
+    void sendEmail(String email, final Long companyId)
     {
         String url = getResources().getString(R.string.api_host) + String.format(ep_recoverPassword,email,companyId);
         Log.d(TAG,url);
@@ -375,18 +370,39 @@ public class LoginActivity extends AppCompatActivity
                     JSONObject resp = response.getJSONObject(0); //Hecha delav el endpoint then hacemos esto
                     if (  resp.getString("Code").equals("01"))  //Supongo que 01 es exito
                     {
-                        //TODO
-                        //FUE EXITOSO EL ENVIO DE CORREO, AVISAR CON UN MENSAJE O ALGO, EN ESTE PUNTO
-                        //UNO DEBE ESPERAR A QUE LE LLEGUE EL CORREO, AQUI SE DEBE DE PRESENTAR UNA VISTA
-                        //CON 3 CAMPOS
-                            //UNO PARA CODIGO ENVIADO POR CORREO
-                            //UNO PARA NUEVA CONTRA
-                            //UNO PARA CONFIRMAR NUEVA CONTRA
-                        //SI COINCIDEN CONTRASEÑAS PEGARLE AL ENDPOINT DE GET_RECOVER_CODE QUE CAMBIARA LA CONTRASEÑA
+                        //UNO DEBE ESPERAR A QUE LE LLEGUE EL CORREO CON UN CODIGO QUE SE METE EN EL CAMPO DE TEXTO DEDICADO A ESO
+
+                        final Dialog dialog = new Dialog( LoginActivity.this );
+                        dialog.setContentView(R.layout.dialog_change_password);
+                        dialog.setTitle(getString(R.string.change_password_title));
+
+                        final EditText sentCode = (EditText) dialog.findViewById(R.id.change_sentCode);
+                        final EditText pass = (EditText) dialog.findViewById(R.id.change_pass);
+                        final EditText passConfirm = (EditText) dialog.findViewById(R.id.change_pass_conf);
+
+                        Button button = (Button) dialog.findViewById(R.id.bttn_confirm_chgPwd);
+                        button.setOnClickListener(new View.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(View view)
+                            {
+                                //Valdiar que lo que se metio en ambos campos de contraseña es igual
+                                if (pass.getText().toString().equals( passConfirm.getText().toString() ))
+                                {
+                                    setNewPassword(pass.getText().toString(),companyId,sentCode.getText().toString());
+                                }
+                                else
+                                {
+                                    Toast.makeText(LoginActivity.this,getString(R.string.passwords_match_error),Toast.LENGTH_LONG);
+                                }
+                            }
+                        });
+                        dialog.show();
                     }
                     else
                     {
-                        //ALGO FRACASO, decirle que no mame
+                        Log.e(TAG,"ERROR EN sendEmail , PROBABLEMENTE ALGO DEL ENDPOINT");
+                        Log.e(TAG,response.toString());
                     }
                 }
                 catch (JSONException e)
@@ -413,5 +429,51 @@ public class LoginActivity extends AppCompatActivity
         };
 
         Requester.getInstance().addToRequestQueue(resetPwd);
+    }
+
+    public void setNewPassword(String password, Long companyId, String code_from_mail)
+    {
+        String url = getResources().getString(R.string.api_host) + String.format(ep_setPassword,code_from_mail,password,companyId);
+        Log.d(TAG,url);
+        JsonArrayRequest setPassword = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>()
+        {
+            @Override
+            public void onResponse(JSONArray response)
+            {
+                try
+                {
+                    JSONObject resp = response.getJSONObject(0); //Hecha delav el endpoint then hacemos esto
+                    if (  resp.getString("Code").equals("01"))  //Supongo que 01 es exito
+                    {
+                        Toast.makeText(LoginActivity.this,getString(R.string.change_password_success),Toast.LENGTH_LONG);
+                    }
+                    else
+                    {
+                        Toast.makeText(LoginActivity.this,getString(R.string.change_password_fail),Toast.LENGTH_LONG);
+                    }
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+        }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError
+            {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Basic amF2aWVyOjEyMw=="); //BIEN NACO HARDCODEADO
+                return headers;
+            }
+        };
+        Requester.getInstance().addToRequestQueue(setPassword);
     }
 }
