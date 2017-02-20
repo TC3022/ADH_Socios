@@ -196,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements MisResultados.onM
         public int getCount() {return 3;} //Total fragments
 
         @Override
-+        public CharSequence getPageTitle(int position) {
+        public CharSequence getPageTitle(int position) {
             String section01 = getResources().getString(R.string.section01);
             String section02 = getResources().getString(R.string.section02);
             String section03 = getResources().getString(R.string.section03);
