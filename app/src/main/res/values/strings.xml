@@ -5,15 +5,17 @@
     <string name="login_button_text">Login</string>
     <string name="password_hint">Password</string>
     <string name="here"><u>here</u></string>
-    <string name="msg_before_here">Don\'t worry press</string>
-    <string name="msg_after_here">to recover it</string>
+    <string name="msg_before_here">Forgot? Don\'t worry, press</string>
+    <string name="msg_after_here">to recover it.</string>
     <string name="hyperlinkPrivacyPolicy"><u>Privacy Policy</u></string>
     <string name="ok">ok</string>
     <string name="privacyPolicyTitle">Privacy Policy</string>
     <string name="PrivacyPolicy">Inssoft Soluciones Java de México S. de R.L. de C.V. hace de su conocimiento, de ser la responsable del tratamiento y protección de sus datos personales de acuerdo a las finalidades pactadas y ofrecidas por Inssoft hacia sus Usuarios, Clientes, Aliados, etc., y a lo establecido por la Ley Federal de Protección de Datos Personales en Posesión de los Particulares, con domicilio en, Av. Prolongación Paseo de la Reforma No. 115 Int 806-6, Colonia Paseo de las Lomas C.P. 01330, Delegación Álvaro Obregón, México D.F. Si usted requiere más información, puede acceder a nuestro aviso de privacidad completo, www.inssoftmx.com/asviso_privacidad.pdf o bien acudiendo a nuestro domicilio Comercial, ubicado en Florencia 65, Tercer Piso, Colonia Juarez, C.P 06600, Delegación Cuauhtémoc, México D.F. </string>
     <string name="forgottenPwdTitle">Forgot your Password?</string>
     <string name="forgotPasswordText">Please insert the email that you used during Sign Up, we\'ll send you a link to change it</string>
+
     <string name="dismiss">Back</string>
+    <string name="accept">Accept</string>
     <string name="send">Send</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="action_logout">Logout</string>
@@ -22,4 +24,12 @@
     <string name="section01">SECTION 1</string>
     <string name="section02">SECTION 2</string>
     <string name="section03">SECTION 3</string>
+    <string name="msg_wrong_user_password">Wrong User/Password</string>
+    <string name="mustAcceptPP">You must accept de Privacy Policy</string>
+    <string name="change_password_title">Change password</string>
+    <string name="password_confirm_hint">Confirm Password</string>
+    <string name="sentCodeHint">Sent Code</string>
+    <string name="passwords_match_error">Passwords do not match</string>
+    <string name="change_password_success">Your new password was set succesfully</string>
+    <string name="change_password_fail">Error changing password, contact the admin</string>
 </resources>

@@ -22,7 +22,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import csf.itesm.mx.adhsocios.R;
-import csf.itesm.mx.adhsocios.models.Datos_Model;
+import csf.itesm.mx.adhsocios.models.User;
 import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private static final String TAG = "Main";
 
-    private Datos_Model user;
+    private User user;
     private Realm mRealm;
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity
 
         //IMPORTANTE, ESTO ES LO QUE YO AGREGUE
         mRealm = Realm.getDefaultInstance();
-        user = mRealm.where(Datos_Model.class).findFirst();
+        user = mRealm.where(User.class).findFirst();
         if ( user == null ) //Not Logged, enviar al login
         {
             askToLogin();
@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity
         {
             case R.id.action_logout:
                 mRealm.beginTransaction();
-                    mRealm.clear(Datos_Model.class); //Quitar registro del ususuario loggeado
+                    mRealm.clear(User.class); //Quitar registro del ususuario loggeado
                 mRealm.commitTransaction();
                 user = null;                     //Asegurar que lo dejamos nulo
                 askToLogin();                    //Matar esta actividad y abrir login
