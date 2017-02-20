@@ -34,14 +34,7 @@ import csf.itesm.mx.adhsocios.Requester;
 import csf.itesm.mx.adhsocios.models.Datos_Model;
 import io.realm.Realm;
 
-//TODO FINALIZAR EL PROCESO DE CAMBIO DE PASSWORD
-//TODO Agregar XML de estilos/Colores/Imagenes de estos weyes (https://www.materialpalette.com)
 //TODO CAMBIAR IDIOMA
-//TODO LOGIN CON ENDPOINT
-    //TODO GUARDAR RESULTADO DE LOGIN EN BASE REALM
-    //TODO OBTENER USUARIO EN REALM DESDE OTRA ACTIVIDAD
-//TODO DIALOG DE AVISO DE PRIVACIDAD
-    //TODO AL ACEPTARLO ACTUALIZAR EL ENDPOINT
 //TODO Disenar nuevas pantallas
     //TODO Agregar Nuevas Pantallas
 

@@ -9,26 +9,28 @@ import java.util.TimerTask;
 
 import csf.itesm.mx.adhsocios.R;
 
-public class splash extends AppCompatActivity {
+public class SplashActivity extends AppCompatActivity {
 
 
     private long wait = 4000;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
 
-        TimerTask task = new TimerTask() {
+        TimerTask task = new TimerTask()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 finish();
-                Intent intent = new Intent().setClass(splash.this, LoginActivity.class);
+                Intent intent = new Intent().setClass(SplashActivity.this, MainActivity.class);
                 startActivity(intent);
             }
         };
 
-        Timer timer = new Timer();
-        timer.schedule(task, wait);
+        (new Timer()).schedule(task, wait);
     }
 }
