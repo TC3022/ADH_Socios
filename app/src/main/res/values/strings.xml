@@ -5,8 +5,8 @@
     <string name="login_button_text">Login</string>
     <string name="password_hint">Password</string>
     <string name="here"><u>here</u></string>
-    <string name="msg_before_here">Don\'t worry press</string>
-    <string name="msg_after_here">to recover it</string>
+    <string name="msg_before_here">Forgot? Don\'t worry, press</string>
+    <string name="msg_after_here">to recover it.</string>
     <string name="hyperlinkPrivacyPolicy"><u>Privacy Policy</u></string>
     <string name="ok">ok</string>
     <string name="authenticating">Loading...</string>
