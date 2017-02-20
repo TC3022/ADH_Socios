@@ -430,7 +430,6 @@ public class LoginActivity extends AppCompatActivity
 
         Requester.getInstance().addToRequestQueue(resetPwd);
     }
-
     public void setNewPassword(String password, Long companyId, String code_from_mail)
     {
         String url = getResources().getString(R.string.api_host) + String.format(ep_setPassword,code_from_mail,password,companyId);
