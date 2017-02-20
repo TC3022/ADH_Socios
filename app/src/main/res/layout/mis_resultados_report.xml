@@ -5,8 +5,6 @@
 
     <ListView
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="0dp" />
+        android:layout_height="48dp" />
 
 </android.support.constraint.ConstraintLayout>
