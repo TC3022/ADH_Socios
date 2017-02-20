@@ -65,6 +65,10 @@ public class MisResultados extends Fragment
 
     void loadResults()
     {
+        Log.d(TAG,mUser.getAssociateId());
+        Log.d(TAG, String.valueOf(mUser.getCompanyid()));
+        //http://201.122.77.1:8085/api/json/GetMyResults?associateId=%s&companyId=%s
+
         //Pegar al endpoint para obtener results
     }
 
