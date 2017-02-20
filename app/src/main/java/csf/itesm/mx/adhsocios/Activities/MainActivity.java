@@ -179,13 +179,16 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public CharSequence getPageTitle(int position) {
+            String section01 = getResources().getString(R.string.section01);
+            String section02 = getResources().getString(R.string.section02);
+            String section03 = getResources().getString(R.string.section03);
             switch (position) {
                 case 0:
-                    return "SECTION 1";
+                    return section01;
                 case 1:
-                    return "SECTION 2";
+                    return section02;
                 case 2:
-                    return "SECTION 3";
+                    return section03;
             }
             return null;
         }

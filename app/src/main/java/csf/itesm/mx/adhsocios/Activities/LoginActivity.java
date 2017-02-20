@@ -144,8 +144,10 @@ public class LoginActivity extends AppCompatActivity
     }
     public void login(String username,String password)
     {
+        String authenticate = getResources().getString(R.string.authenticate);
+
         final ProgressDialog pdia = new ProgressDialog(LoginActivity.this);
-        pdia.setMessage("Autentificando...");
+        pdia.setMessage(authenticate);
         pdia.show();
 
         String url = getResources().getString(R.string.api_host) + String.format(ep_getLogin,username,password);
