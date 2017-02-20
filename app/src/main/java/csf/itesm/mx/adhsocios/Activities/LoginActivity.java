@@ -34,10 +34,7 @@ import csf.itesm.mx.adhsocios.Requester;
 import csf.itesm.mx.adhsocios.models.User;
 import io.realm.Realm;
 
-//TODO Agregar XML de estilos/Colores/Imagenes de estos weyes (https://www.materialpalette.com)
-
 //TODO CAMBIAR IDIOMA
-
 //TODO Disenar nuevas pantallas
     //TODO Agregar Nuevas Pantallas
 
