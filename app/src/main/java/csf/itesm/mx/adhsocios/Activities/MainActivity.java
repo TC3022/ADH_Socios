@@ -1,6 +1,7 @@
 package csf.itesm.mx.adhsocios.Activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -21,11 +22,12 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
+import csf.itesm.mx.adhsocios.Fragments.MisResultados;
 import csf.itesm.mx.adhsocios.R;
 import csf.itesm.mx.adhsocios.models.User;
 import io.realm.Realm;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements MisResultados.onMiSaludInteraction
 {
 
     /**
@@ -41,6 +43,8 @@ public class MainActivity extends AppCompatActivity
 
     private User user;
     private Realm mRealm;
+
+    private MisResultados saludFragment;
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -55,32 +59,25 @@ public class MainActivity extends AppCompatActivity
         //IMPORTANTE, ESTO ES LO QUE YO AGREGUE
         mRealm = Realm.getDefaultInstance();
         user = mRealm.where(User.class).findFirst();
+
         if ( user == null ) //Not Logged, enviar al login
         {
             askToLogin();
             return;
         }
+
         Log.d(TAG, String.format("%s %s %sm",user.getAssociateId(),user.getNmComplete(),user.getEstatura()) );
-
-
-
+        saludFragment = MisResultados.newInstance( user );
+        setAdapter();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
@@ -88,6 +85,18 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    void setAdapter()
+    {
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+        //Layout
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+    }
     void askToLogin()
     {
         startActivity(new Intent().setClass(MainActivity.this, LoginActivity.class)); //Llamar Login
@@ -117,6 +126,12 @@ public class MainActivity extends AppCompatActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onMiSaludInteraction(Uri uri)
+    {
+
     }
 
     /**
@@ -158,30 +173,35 @@ public class MainActivity extends AppCompatActivity
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public class SectionsPagerAdapter extends FragmentPagerAdapter
+    {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 3;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
+        public Fragment getItem(int position)
+        {
+            switch (position)
+            {
                 case 0:
-                    return "SECTION 1";
+                    return saludFragment;
+                default:
+                    return PlaceholderFragment.newInstance(position + 1);
+            }
+        }
+
+        @Override
+        public int getCount() {return 3;} //Total fragments
+
+        @Override
+        public CharSequence getPageTitle(int position)
+        {
+            switch (position)
+            {
+                case 0:
+                    return "Mis Resultados";
                 case 1:
                     return "SECTION 2";
                 case 2:
