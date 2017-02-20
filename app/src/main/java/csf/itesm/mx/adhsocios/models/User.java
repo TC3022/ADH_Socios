@@ -7,7 +7,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by rubcuadra on 2/15/17.
  */
 
-public class Datos_Model extends RealmObject
+public class User extends RealmObject //Se llamaba Datos_Model en la otra actividad
 {
     @PrimaryKey
     private int id;
@@ -22,9 +22,9 @@ public class Datos_Model extends RealmObject
     private String NmComplete;
     private boolean Logged;
 
-    public Datos_Model(){};
+    public User(){};
 
-    public Datos_Model(int id,String firtname, String lastname, double estatura, String gender, long companyid, String associateimage, String associateId, String nmComplete, boolean logged)
+    public User(int id, String firtname, String lastname, double estatura, String gender, long companyid, String associateimage, String associateId, String nmComplete, boolean logged)
     {
         this.id = id;
         Firtname = firtname;
