@@ -12,8 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
+import csf.itesm.mx.adhsocios.Adapters.ResultsAdapter;
 import csf.itesm.mx.adhsocios.R;
 import csf.itesm.mx.adhsocios.Utils.Parser;
+import csf.itesm.mx.adhsocios.models.Result;
 import csf.itesm.mx.adhsocios.models.User;
 
 public class MisResultados extends Fragment
@@ -22,6 +26,7 @@ public class MisResultados extends Fragment
     private User mUser;
     private Activity CONTEXT;
     private RecyclerView mRecyclerView;
+    private ResultsAdapter mResultsAdapter;
     private static String TAG="MisResultados";
     private onMiSaludInteraction mListener;
     public MisResultados() {}
@@ -51,7 +56,7 @@ public class MisResultados extends Fragment
     {
         View view = inflater.inflate(R.layout.fragment_mi_salud, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_results);
-        mResultsAdapter = new ResultsAdapter(CONTEXT,new ArrayList<Auto>());
+        mResultsAdapter = new ResultsAdapter(CONTEXT,new ArrayList<Result>());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(CONTEXT));
         mRecyclerView.setAdapter( mResultsAdapter );
         loadResults();
