@@ -35,10 +35,9 @@ import csf.itesm.mx.adhsocios.models.User;
 import io.realm.Realm;
 
 //TODO CAMBIAR IDIOMA
+
 //TODO Disenar nuevas pantallas
     //TODO Agregar Nuevas Pantallas
-
-
 
 public class LoginActivity extends AppCompatActivity
 {
@@ -296,9 +295,9 @@ public class LoginActivity extends AppCompatActivity
         {
             //Enviar mensaje que debe ingresar correo
             AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-            builder.setTitle("Mensaje.");
-            builder.setMessage("Escribe un correo válido. ");
-            builder.setPositiveButton("Aceptar",new DialogInterface.OnClickListener()
+            builder.setTitle("");
+            builder.setMessage( getString(R.string.wrong_email) );
+            builder.setPositiveButton(getString(R.string.accept),new DialogInterface.OnClickListener()
             {
                 public void onClick(DialogInterface dialog,int which)
                 {
@@ -328,6 +327,10 @@ public class LoginActivity extends AppCompatActivity
                     {
                         Long companyId = response.getJSONObject(1).getLong("IdEmpresa");
                         sendEmail(email,companyId);
+                    }
+                    else
+                    {
+                        Toast.makeText(LoginActivity.this, getString(R.string.wrong_email), Toast.LENGTH_SHORT).show();
                     }
                 }
                 catch (JSONException e)
