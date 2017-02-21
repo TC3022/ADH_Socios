@@ -22,12 +22,16 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
-import csf.itesm.mx.adhsocios.Fragments.MisResultados;
+import java.util.ArrayList;
+import java.util.List;
+
+import csf.itesm.mx.adhsocios.Fragments.MiSaludFragment;
+import csf.itesm.mx.adhsocios.Fragments.MisResultadosFragment;
 import csf.itesm.mx.adhsocios.R;
 import csf.itesm.mx.adhsocios.models.User;
 import io.realm.Realm;
 
-public class MainActivity extends AppCompatActivity implements MisResultados.onMiSaludInteraction
+public class MainActivity extends AppCompatActivity implements MisResultadosFragment.onMisResultadosInteractionListener,MiSaludFragment.OnMiSaludInteractionListener
 {
 
     /**
@@ -44,7 +48,8 @@ public class MainActivity extends AppCompatActivity implements MisResultados.onM
     private User user;
     private Realm mRealm;
 
-    private MisResultados saludFragment;
+    private List<Fragment> fragments;
+
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -67,7 +72,12 @@ public class MainActivity extends AppCompatActivity implements MisResultados.onM
         }
 
         Log.d(TAG, String.format("%s %s %sm",user.getAssociateId(),user.getNmComplete(),user.getEstatura()) );
-        saludFragment = MisResultados.newInstance( user );
+
+        fragments = new ArrayList<>();
+        fragments.add( MisResultadosFragment.newInstance(user)); //Elemento 0 de tabs
+        fragments.add( MiSaludFragment.newInstance(user)); //Elemento 1
+        fragments.add( PlaceholderFragment.newInstance(3) );
+
         setAdapter();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -129,8 +139,13 @@ public class MainActivity extends AppCompatActivity implements MisResultados.onM
     }
 
     @Override
-    public void onMiSaludInteraction(Uri uri)
+    public void onMisResultadosInteraction(Uri uri)
     {
+
+    }
+
+    @Override
+    public void OnMiSaludInteraction(Uri uri) {
 
     }
 
@@ -151,7 +166,8 @@ public class MainActivity extends AppCompatActivity implements MisResultados.onM
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
+        public static PlaceholderFragment newInstance(int sectionNumber)
+        {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
@@ -162,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements MisResultados.onM
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_dummy, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
@@ -183,24 +199,20 @@ public class MainActivity extends AppCompatActivity implements MisResultados.onM
         @Override
         public Fragment getItem(int position)
         {
-            switch (position)
-            {
-                case 0:
-                    return saludFragment;
-                default:
-                    return PlaceholderFragment.newInstance(position + 1);
-            }
+            return fragments.get(position);
         }
 
         @Override
         public int getCount() {return 3;} //Total fragments
 
         @Override
-        public CharSequence getPageTitle(int position) {
+        public CharSequence getPageTitle(int position)
+        {
             String section01 = getResources().getString(R.string.section01);
             String section02 = getResources().getString(R.string.section02);
             String section03 = getResources().getString(R.string.section03);
-            switch (position) {
+            switch (position)
+            {
                 case 0:
                     return section01;
                 case 1:

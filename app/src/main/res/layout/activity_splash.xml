@@ -9,8 +9,7 @@
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
     android:paddingTop="0dp"
-    tools:context="csf.itesm.mx.adhsocios.Activities.SplashActivity"
-    android:background="@drawable/healthy">
+    tools:context="csf.itesm.mx.adhsocios.Activities.SplashActivity">
 
     <ImageView
         android:layout_width="fill_parent"
