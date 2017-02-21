@@ -85,57 +85,12 @@ public class MisResultadosFragment extends Fragment
 
         String url = getResources().getString(R.string.api_host) + String.format(ep_getResults,mUser.getAssociateId(),mUser.getCompanyid());
         Log.d(TAG,url);
-
         JsonArrayRequest setPassword = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>()
         {
             @Override
             public void onResponse(JSONArray response)
             {
-                try
-                {
-                    JSONObject resp = response.getJSONObject(0); //Hecha delav el endpoint then hacemos esto
-                    if (  resp.getString("Code").equals("01"))  //Supongo que 01 es exito
-                    {
-                        JSONObject results = response.getJSONArray(1).getJSONObject(0);
-                        JSONArray weights = results.getJSONArray("Weight");
-                        JSONArray bmi = results.getJSONArray("Bmi");
-                        JSONArray fat = results.getJSONArray("Fat");
-                        JSONArray muscle = results.getJSONArray("Muscle");
-
-                        JSONObject current = null;
-                        UserResults ur = new UserResults();
-
-                        for (int i = 0; i < weights.length(); i++)
-                        {
-                            current = weights.getJSONObject(i);
-                            ur.addWeight( new ResultPackage( current.getDouble("Value"), current.getString("Date") ));
-                        }
-                        for (int i = 0; i < bmi.length(); i++)
-                        {
-                            current = weights.getJSONObject(i);
-                            ur.addBmi( new ResultPackage( current.getDouble("Value"), current.getString("Date") ));
-                        }
-                        for (int i = 0; i < bmi.length(); i++)
-                        {
-                            current = fat.getJSONObject(i);
-                            ur.addFat( new ResultPackage( current.getDouble("Value"), current.getString("Date") ));
-                        }
-                        for (int i = 0; i < bmi.length(); i++)
-                        {
-                            current = muscle.getJSONObject(i);
-                            ur.addMuscle( new ResultPackage( current.getDouble("Value"), current.getString("Date") ));
-                        }
-                        mResultsAdapter.setResults(ur);
-                    }
-                    else
-                    {
-
-                    }
-                }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
-                }
+                mResultsAdapter.setResults(Parser.parseUserResults(response));
             }
 
         }, new Response.ErrorListener()
@@ -155,7 +110,6 @@ public class MisResultadosFragment extends Fragment
             }
         };
         Requester.getInstance().addToRequestQueue(setPassword);
-
     }
 
     @Override

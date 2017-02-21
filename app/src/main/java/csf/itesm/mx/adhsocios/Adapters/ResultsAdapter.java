@@ -10,6 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import csf.itesm.mx.adhsocios.R;
+import csf.itesm.mx.adhsocios.models.ResultPackage;
 import csf.itesm.mx.adhsocios.models.UserResults;
 
 /**
@@ -45,16 +46,31 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, int position)
     {
         if (resultActivities==null) return;
+        List<ResultPackage> results;
+        String title;
+
         switch (position)
         {
-            case 0: //Fat?
-                holder.title.setText( String.valueOf( resultActivities.getFat().get(0).getValue() ) );
+            case 0:
+                title = "Fat";
+                results = resultActivities.getFat();
+                break;
+            case 1:
+                title = "BMI";
+                results = resultActivities.getBmi();
+                break;
+            case 2:
+                title = "Weight";
+                results = resultActivities.getWeight();
                 break;
             default:
-                holder.title.setText( String.valueOf( resultActivities.getBmi().get(0).getValue() ) );
+                title = "Muscle";
+                results = resultActivities.getMuscle();
                 break;
         }
-        //Hacer desmadres
+
+        holder.title.setText( title );
+        holder.last_result.setText( String.valueOf( results.get(0).getValue() ));
     }
 
     @Override
@@ -66,11 +82,13 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHold
     class ViewHolder extends RecyclerView.ViewHolder
     {
         protected TextView title;
+        protected TextView last_result;
 
         public ViewHolder(View view)
         {
             super(view);
             title = (TextView) view.findViewById( R.id.result_activity_name);
+            last_result = (TextView) view.findViewById( R.id.last_result_val);
         }
     }
 
