@@ -1,0 +1,25 @@
+<resources>
+    <string name="api_host">http://201.122.77.1:8085/api/json/</string>
+    <string name="app_name">ADH_Socios</string>
+    <string name="username_hint">Usuário</string>
+    <string name="login_button_text">Entrar</string>
+    <string name="password_hint">Senha</string>
+    <string name="here"><u>cá</u></string>
+    <string name="msg_before_here">Não se preocupe, pressione</string>
+    <string name="msg_after_here">Para recuperá-lo</string>
+    <string name="hyperlinkPrivacyPolicy"><u>Política de Privacidade</u></string>
+    <string name="ok">ok</string>
+    <string name="PrivacyPolicy">Inssoft Soluciones Java de México S. de R.L. de C.V. hace de su conocimiento, de ser la responsable del tratamiento y protección de sus datos personales de acuerdo a las finalidades pactadas y ofrecidas por Inssoft hacia sus Usuarios, Clientes, Aliados, etc., y a lo establecido por la Ley Federal de Protección de Datos Personales en Posesión de los Particulares, con domicilio en, Av. Prolongación Paseo de la Reforma No. 115 Int 806-6, Colonia Paseo de las Lomas C.P. 01330, Delegación Álvaro Obregón, México D.F. Si usted requiere más información, puede acceder a nuestro aviso de privacidad completo, www.inssoftmx.com/asviso_privacidad.pdf o bien acudiendo a nuestro domicilio Comercial, ubicado en Florencia 65, Tercer Piso, Colonia Juarez, C.P 06600, Delegación Cuauhtémoc, México D.F.</string>
+    <string name="privacyPolicyTitle">Política de Privacidade</string>
+    <string name="forgottenPwdTitle">Esqueceu sua senha??</string>
+    <string name="forgotPasswordText">Insira o e-mail que você usou durante a Inscrição, Enviaremos um link para alterá-lo</string>
+    <string name="dismiss">Para trás</string>
+    <string name="send">Enviar</string>
+    <string name="title_activity_main">AtividadePrincipal</string>
+    <string name="action_logout">Sair</string>
+    <string name="section_format">Olá mundo de seccion: %1$d</string>
+    <string name="authenticate">Autenticando...</string>
+    <string name="section01">SEÇÃO 1</string>
+    <string name="section02">SEÇÃO 2</string>
+    <string name="section03">SEÇÃO 3</string>
+</resources>
