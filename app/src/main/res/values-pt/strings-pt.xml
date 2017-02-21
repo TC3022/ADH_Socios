@@ -9,30 +9,29 @@
     <string name="msg_after_here">Para recuperá-lo</string>
     <string name="hyperlinkPrivacyPolicy"><u>Política de Privacidade</u></string>
     <string name="ok">ok</string>
-    <string name="PrivacyPolicy">Inssoft Soluciones Java de México S. de R.L. de C.V. hace de su conocimiento, de ser la responsable del tratamiento y protección de sus datos personales de acuerdo a las finalidades pactadas y ofrecidas por Inssoft hacia sus Usuarios, Clientes, Aliados, etc., y a lo establecido por la Ley Federal de Protección de Datos Personales en Posesión de los Particulares, con domicilio en, Av. Prolongación Paseo de la Reforma No. 115 Int 806-6, Colonia Paseo de las Lomas C.P. 01330, Delegación Álvaro Obregón, México D.F. Si usted requiere más información, puede acceder a nuestro aviso de privacidad completo, www.inssoftmx.com/asviso_privacidad.pdf o bien acudiendo a nuestro domicilio Comercial, ubicado en Florencia 65, Tercer Piso, Colonia Juarez, C.P 06600, Delegación Cuauhtémoc, México D.F.</string>
+    <string name="PrivacyPolicy">Inssoft Soluciones Java de México S. de R.L. de C.V. Faz de seu conhecimento, de ser responsável pelo tratamento e proteção de seus dados pessoais de acordo com os propósitos acordados e oferecidos pela Inssoft aos seus Usuários, Clientes, Aliados, etc., e ao estabelecido pela Lei Federal de Proteção de Dados Pessoais Em posse dos Indivíduos, com endereço em, Av. Prolongação Paseo de la Reforma nº 115 Int. 806-6, Colonia Paseo de las Lomas CP 01330, Delegação Álvaro Obregón, México D.F. Se você precisar de mais informações, você pode acessar nosso completo aviso de privacidade, www.inssoftmx.com/asviso_privacidad.pdf ou indo para nosso endereço comercial, localizado em Florença 65, Tercer Piso, Colonia Juarez, CP 06600, Delegação Cuauhtémoc, México D.F.</string>
     <string name="privacyPolicyTitle">Política de Privacidade</string>
     <string name="forgottenPwdTitle">Esqueceu sua senha??</string>
     <string name="forgotPasswordText">Insira o e-mail que você usou durante a Inscrição, Enviaremos um link para alterá-lo</string>
+
     <string name="dismiss">Para trás</string>
+    <string name="aceitar">Accept</string>
     <string name="send">Enviar</string>
     <string name="title_activity_main">AtividadePrincipal</string>
     <string name="action_logout">Sair</string>
     <string name="section_format">Olá mundo de seccion: %1$d</string>
     <string name="authenticate">Autenticando...</string>
-    <string name="section01">SEÇÃO 1</string>
-    <string name="section02">SEÇÃO 2</string>
+    <string name="section01">Meus Resultados</string>
+    <string name="section02">A Minha Saúde</string>
     <string name="section03">SEÇÃO 3</string>
 
-    <string name="msg_wrong_user_password">Wrong User/Password</string>
-    <string name="mustAcceptPP">You must accept de Privacy Policy</string>
-    <string name="change_password_title">Change password</string>
-    <string name="password_confirm_hint">Confirm Password</string>
-    <string name="sentCodeHint">Sent Code</string>
-    <string name="passwords_match_error">Passwords do not match</string>
-    <string name="change_password_success">Your new password was set succesfully</string>
-    <string name="change_password_fail">Error changing password, contact the admin</string>
-    <string name="wrong_email">Wrong email</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="msg_wrong_user_password">Usuário/senha errado</string>
+    <string name="mustAcceptPP">Você deve aceitar a política de privacidade</string>
+    <string name="change_password_title">Mudar senha</string>
+    <string name="password_confirm_hint">Confirme a Senha</string>
+    <string name="sentCodeHint">Código enviado</string>
+    <string name="passwords_match_error">As senhas não correspondem</string>
+    <string name="change_password_success">Sua nova senha foi enviada com sucesso</string>
+    <string name="change_password_fail">Erro ao alterar a senha, entre em contato com o administrador</string>
+    <string name="wrong_email">E-mail errado</string>
 </resources>

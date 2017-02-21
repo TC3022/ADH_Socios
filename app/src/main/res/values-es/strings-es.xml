@@ -13,26 +13,25 @@
     <string name="privacyPolicyTitle">Aviso de privacidad</string>
     <string name="forgottenPwdTitle">¿Olvidaste tu contraseña?</string>
     <string name="forgotPasswordText">Por favor introduce el correo que usaste para iniciar sesión, te mandaremos un link para cambiar tu contraseña</string>
+
     <string name="dismiss">Atrás</string>
+    <string name="accept">Aceptar</string>
     <string name="send">Enviar</string>
     <string name="title_activity_main">ActividadPrincipal</string>
     <string name="action_logout">Cerrar sesión</string>
     <string name="section_format">Hola mundo desde sección: %1$d</string>
     <string name="authenticate">Autenticando...</string>
-    <string name="section01">SECCION 1</string>
-    <string name="section02">SECCION 2</string>
+    <string name="section01">Mis Resultados</string>
+    <string name="section02">Mi Salud</string>
     <string name="section03">SECCION 3</string>
 
-    <string name="msg_wrong_user_password">Wrong User/Password</string>
-    <string name="mustAcceptPP">You must accept de Privacy Policy</string>
-    <string name="change_password_title">Change password</string>
-    <string name="password_confirm_hint">Confirm Password</string>
-    <string name="sentCodeHint">Sent Code</string>
-    <string name="passwords_match_error">Passwords do not match</string>
-    <string name="change_password_success">Your new password was set succesfully</string>
-    <string name="change_password_fail">Error changing password, contact the admin</string>
-    <string name="wrong_email">Wrong email</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="msg_wrong_user_password">Usuario/Contraseña incorrectos</string>
+    <string name="mustAcceptPP">Debes aceptar el Aviso de Privacidad</string>
+    <string name="change_password_title">Modificar Contraseña</string>
+    <string name="password_confirm_hint">Confirmar Contraseña</string>
+    <string name="sentCodeHint">Codigo enviado</string>
+    <string name="passwords_match_error">Las contraseñas no coinciden</string>
+    <string name="change_password_success">Tu contraseña se ha modificado exitosamente</string>
+    <string name="change_password_fail">Error al modificar la contraseña, contacta al administrador</string>
+    <string name="wrong_email">Email incorrecto</string>
 </resources>
