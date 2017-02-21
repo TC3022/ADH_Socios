@@ -5,46 +5,36 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-
 import org.json.JSONArray;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import csf.itesm.mx.adhsocios.Adapters.ResultsAdapter;
 import csf.itesm.mx.adhsocios.R;
 import csf.itesm.mx.adhsocios.Requester;
 import csf.itesm.mx.adhsocios.Utils.Parser;
 import csf.itesm.mx.adhsocios.models.User;
 
-public class MisResultadosFragment extends Fragment
+public class MiSaludFragment extends Fragment
 {
-
     private User mUser;
+
+    private static String TAG="MiSaludFragment";
     private Activity CONTEXT;
-    private RecyclerView mRecyclerView;
-    private ResultsAdapter mResultsAdapter;
-    private static String TAG="MisResultadosFragment";
-    private static final String ep_getResults="GetMyResults?associateId=%s&companyId=%s";
-    private onMisResultadosInteractionListener mListener;
+    private static final String ep_getExpediente="GetExpedienteAssociate?associateId=%s&companyId=%s";
+    private OnMiSaludInteractionListener mListener;
+    public MiSaludFragment() {}
 
-    public MisResultadosFragment() {}
-
-    public static MisResultadosFragment newInstance(User u)
+    public static MiSaludFragment newInstance(User u)
     {
-        MisResultadosFragment fragment = new MisResultadosFragment();
+        MiSaludFragment fragment = new MiSaludFragment();
         fragment.setArguments( Parser.UserToBundle(u) );
         return fragment;
     }
@@ -64,26 +54,23 @@ public class MisResultadosFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.fragment_mis_resultados, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_results);
-        mResultsAdapter = new ResultsAdapter(CONTEXT,null);
-        mRecyclerView.setLayoutManager( new GridLayoutManager(CONTEXT,2) );
-        mRecyclerView.setAdapter( mResultsAdapter );
-        loadResults();
+        View view = inflater.inflate(R.layout.fragment_mi_salud, container, false);
+        loadSalud();
         return view;
     }
 
-    void loadResults()
+    void loadSalud()
     {
-
-        String url = getResources().getString(R.string.api_host) + String.format(ep_getResults,mUser.getAssociateId(),mUser.getCompanyid());
+        String url = getResources().getString(R.string.api_host) + String.format(ep_getExpediente,mUser.getAssociateId(),mUser.getCompanyid());
         Log.d(TAG,url);
         JsonArrayRequest setPassword = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>()
         {
             @Override
             public void onResponse(JSONArray response)
             {
-                mResultsAdapter.setResults(Parser.parseUserResults(response));
+                Log.d(TAG,response.toString());
+                //mResultsAdapter.setResults(Parser.parseUserResults(response));
+                
             }
 
         }, new Response.ErrorListener()
@@ -108,9 +95,9 @@ public class MisResultadosFragment extends Fragment
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof onMisResultadosInteractionListener)
+        if (context instanceof OnMiSaludInteractionListener)
         {
-            mListener = (onMisResultadosInteractionListener) context;
+            mListener = (OnMiSaludInteractionListener) context;
         } else
         {
             throw new RuntimeException(context.toString()
@@ -125,9 +112,8 @@ public class MisResultadosFragment extends Fragment
         mListener = null;
     }
 
-
-    public interface onMisResultadosInteractionListener
+    public interface OnMiSaludInteractionListener
     {
-        void onMisResultadosInteraction(Uri uri);
+        void OnMiSaludInteraction(Uri uri);
     }
 }
