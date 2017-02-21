@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import csf.itesm.mx.adhsocios.R;
-import csf.itesm.mx.adhsocios.models.Result;
+import csf.itesm.mx.adhsocios.models.UserResults;
 
 /**
  * Created by rubcuadra on 2/20/17.
@@ -18,18 +18,18 @@ import csf.itesm.mx.adhsocios.models.Result;
 
 public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHolder>
 {
-    private List<Result> results;
+    private UserResults resultActivities;
     private Activity activity;
 
-    public ResultsAdapter(Activity activity, List<Result> res)
+    public ResultsAdapter(Activity activity, UserResults res)
     {
-        this.results = res;
+        this.resultActivities = res;
         this.activity = activity;
     }
 
-    public void addResults(List<Result> res)
+    public void setResults(UserResults res)
     {
-        this.results.addAll(results);
+        this.resultActivities = res;
         notifyDataSetChanged();
     }
 
@@ -44,15 +44,23 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position)
     {
-        Result current = results.get(position);
-        holder.title.setText(current.getTitle());
+        if (resultActivities==null) return;
+        switch (position)
+        {
+            case 0: //Fat?
+                holder.title.setText( String.valueOf( resultActivities.getFat().get(0).getValue() ) );
+                break;
+            default:
+                holder.title.setText( String.valueOf( resultActivities.getBmi().get(0).getValue() ) );
+                break;
+        }
         //Hacer desmadres
     }
 
     @Override
     public int getItemCount()
     {
-        return results.size();
+        return resultActivities.getAmountOfResults();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder
@@ -62,7 +70,7 @@ public class ResultsAdapter extends RecyclerView.Adapter<ResultsAdapter.ViewHold
         public ViewHolder(View view)
         {
             super(view);
-            title = (TextView) view.findViewById( R.id.result_title);
+            title = (TextView) view.findViewById( R.id.result_activity_name);
         }
     }
 

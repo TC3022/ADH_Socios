@@ -22,12 +22,12 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
-import csf.itesm.mx.adhsocios.Fragments.MisResultados;
+import csf.itesm.mx.adhsocios.Fragments.MisResultadosFragment;
 import csf.itesm.mx.adhsocios.R;
 import csf.itesm.mx.adhsocios.models.User;
 import io.realm.Realm;
 
-public class MainActivity extends AppCompatActivity implements MisResultados.onMiSaludInteraction
+public class MainActivity extends AppCompatActivity implements MisResultadosFragment.onMiSaludInteraction
 {
 
     /**
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements MisResultados.onM
     private User user;
     private Realm mRealm;
 
-    private MisResultados saludFragment;
+    private MisResultadosFragment saludFragment;
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements MisResultados.onM
         }
 
         Log.d(TAG, String.format("%s %s %sm",user.getAssociateId(),user.getNmComplete(),user.getEstatura()) );
-        saludFragment = MisResultados.newInstance( user );
+        saludFragment = MisResultadosFragment.newInstance( user );
         setAdapter();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
