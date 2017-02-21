@@ -36,7 +36,7 @@ public class SaludAdapter extends RecyclerView.Adapter<SaludAdapter.ViewHolder>
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
     {
         LayoutInflater inflater = activity.getLayoutInflater();
-        View view = inflater.inflate(R.layout.item_mi_salud,parent, false);
+        View view = inflater.inflate(R.layout.item_misalud,parent, false);
         return new ViewHolder(view);
     }
 

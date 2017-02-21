@@ -97,7 +97,7 @@ public class MiSaludFragment extends Fragment
                             current.setDescription(expediente.getJSONObject(i).getString("Description"));
                             records.add(current);
                         }
-                        //Updatear Adapter
+                        mSaludAdapter.addRecords(records);
                     }
                     else
                     {
