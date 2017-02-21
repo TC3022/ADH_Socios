@@ -83,31 +83,7 @@ public class MiSaludFragment extends Fragment
             @Override
             public void onResponse(JSONArray response)
             {
-                Log.d(TAG,response.toString());
-                try
-                {
-                    if (  response.getJSONObject(0).getString("Code").equals("01"))  //Supongo que 01 es exito
-                    {
-                        JSONArray expediente = response.getJSONArray(1);
-                        List<UserRecord> records = new ArrayList<>();
-                        UserRecord current;
-                        for (int i = 0; i < expediente.length() ; i++)
-                        {
-                            current = new UserRecord();
-                            current.setDescription(expediente.getJSONObject(i).getString("Description"));
-                            records.add(current);
-                        }
-                        mSaludAdapter.addRecords(records);
-                    }
-                    else
-                    {
-                        Log.e("parseMiSalud","Respuesta error del servicio");
-                    }
-                }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
-                }
+                mSaludAdapter.addRecords( Parser.parseUserRecords(response) );
             }
 
         }, new Response.ErrorListener()

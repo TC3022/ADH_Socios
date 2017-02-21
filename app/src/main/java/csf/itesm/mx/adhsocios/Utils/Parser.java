@@ -7,8 +7,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import csf.itesm.mx.adhsocios.models.ResultPackage;
 import csf.itesm.mx.adhsocios.models.User;
+import csf.itesm.mx.adhsocios.models.UserRecord;
 import csf.itesm.mx.adhsocios.models.UserResults;
 
 /**
@@ -92,5 +96,33 @@ public class Parser
             e.printStackTrace();
         }
         return ur;
+    }
+    public static List<UserRecord> parseUserRecords(JSONArray response)
+    {
+        List<UserRecord> records = new ArrayList<>();
+        try
+        {
+            if (  response.getJSONObject(0).getString("Code").equals("01"))  //Supongo que 01 es exito
+            {
+                JSONArray expediente = response.getJSONArray(1);
+                UserRecord current;
+                for (int i = 0; i < expediente.length() ; i++)
+                {
+                    current = new UserRecord();
+                    current.setDescription(expediente.getJSONObject(i).getString("Description"));
+                    records.add(current);
+                }
+            }
+            else
+            {
+                Log.e("parseMiSalud","Respuesta error del servicio");
+            }
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return records;
+
     }
 }
