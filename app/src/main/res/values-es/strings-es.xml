@@ -34,4 +34,5 @@
     <string name="change_password_success">Tu contraseña se ha modificado exitosamente</string>
     <string name="change_password_fail">Error al modificar la contraseña, contacta al administrador</string>
     <string name="wrong_email">Email incorrecto</string>
+    <string name="ubiquitous">Ubiquitous</string>
 </resources>

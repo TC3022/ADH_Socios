@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -46,6 +47,7 @@ public class LoginActivity extends AppCompatActivity
     @BindView(R.id.login_username) EditText input_username;
     @BindView(R.id.login_password) EditText input_password;
     @BindView(R.id.login_button) Button bttn_login;
+    @BindView(R.id.switch1) Switch host_switch;
 
     private Realm mRealm;
 
@@ -134,111 +136,124 @@ public class LoginActivity extends AppCompatActivity
     }
     public void login(String username,String password)
     {
-        String authenticate = getResources().getString(R.string.authenticate);
-
         final ProgressDialog pdia = new ProgressDialog(LoginActivity.this);
-        pdia.setMessage(authenticate);
+        pdia.setMessage(getResources().getString(R.string.authenticate));
         pdia.show();
 
-        String url = getResources().getString(R.string.api_host) + String.format(ep_getLogin,username,password);
-        Log.d(TAG,url);
-        JsonArrayRequest preResetPwd = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response)
-            {
-                try
+        JsonArrayRequest loginRequest = null;
+
+        if (host_switch.isChecked())
+        {
+            pdia.dismiss();
+            Toast.makeText(LoginActivity.this, "PEGARLE UBIQUITOS" ,Toast.LENGTH_SHORT).show();
+            //Requester.getInstance().addToRequestQueue(loginRequest);
+        }
+        else
+        {
+            String url = getResources().getString(R.string.api_host) + String.format(ep_getLogin,username,password);
+            Log.d(TAG,url);
+            loginRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response)
                 {
-                    JSONObject codes = response.getJSONObject(0);
-                    if (codes.getString("Code").equals("01")) //Fue exitoso y se puede logear
+                    try
                     {
-                        JSONObject data1 = response.getJSONObject(1);
-                        JSONObject data2 = response.getJSONObject(2);
-
-                        Boolean noticePrivacyFlag = data2.getBoolean("NoticePrivacyFlag");
-
-                        final User datos_usuario = new User();
-                        datos_usuario.setFirtname( data2.getString("FirstName") );
-                        datos_usuario.setLastname( data2.getString("LastName") );
-                        datos_usuario.setEstatura( data2.getDouble("Stature") );
-                        datos_usuario.setGender(data2.getString("Gender") );
-                        datos_usuario.setCompanyid( data2.getLong("CompanyId"));
-                        datos_usuario.setAssociateimage( data2.getString("AssociateImage"));
-                        datos_usuario.setAssociateId( data2.getString("AssociateId"));
-                        datos_usuario.setNmComplete( datos_usuario.getFirtname()+" "+datos_usuario.getLastname() );
-                        datos_usuario.setLogged(true);
-
-                        if (noticePrivacyFlag)
+                        JSONObject codes = response.getJSONObject(0);
+                        if (codes.getString("Code").equals("01")) //Fue exitoso y se puede logear
                         {
-                            grantAccess(datos_usuario);
+                            Log.d("LOGIN",response.toString());
+                            JSONObject data1 = response.getJSONObject(1);
+                            JSONObject data2 = response.getJSONObject(2);
+
+                            Boolean noticePrivacyFlag = data2.getBoolean("NoticePrivacyFlag");
+
+                            final User datos_usuario = new User();
+                            datos_usuario.setFirtname( data2.getString("FirstName") );
+                            datos_usuario.setLastname( data2.getString("LastName") );
+                            datos_usuario.setEstatura( data2.getDouble("Stature") );
+                            datos_usuario.setGender(data2.getString("Gender") );
+                            datos_usuario.setCompanyid( data2.getLong("CompanyId"));
+                            datos_usuario.setAssociateimage( data2.getString("AssociateImage"));
+                            datos_usuario.setAssociateId( data2.getString("AssociateId"));
+                            datos_usuario.setNmComplete( datos_usuario.getFirtname()+" "+datos_usuario.getLastname() );
+                            datos_usuario.setLogged(true);
+                            datos_usuario.setHost( getResources().getString(R.string.api_host) );
+
+                            //PreferenceManager.getDefaultSharedPreferences(LoginActivity.this).edit().putString("token", response.getString("token")).apply();
+
+                            if (noticePrivacyFlag)
+                            {
+                                grantAccess(datos_usuario);
+                            }
+                            else
+                            {
+                                Toast.makeText(LoginActivity.this,getString(R.string.mustAcceptPP),Toast.LENGTH_SHORT).show();
+                                //AQUI LE MOSTRAREMOS EL AVISO DE PRIVACIDAD
+                                //SI LO ACEPTA LE DEBEMOS DECIR AL API QUE UPDATEE ESA BANDERA
+                                final Dialog dialog = new Dialog( LoginActivity.this );
+                                dialog.setContentView(R.layout.dialog_aviso_privacidad);
+                                dialog.setTitle( getResources().getString(R.string.privacyPolicyTitle) );
+
+                                Button dismiss = (Button) dialog.findViewById(R.id.bttn_closePrivacyPolicy);
+                                dismiss.setOnClickListener(new View.OnClickListener()
+                                {
+                                    @Override
+                                    public void onClick(View view)
+                                    {
+                                        dialog.dismiss();
+                                    }
+                                });
+
+                                Button accept = (Button) dialog.findViewById(R.id.bttn_closePrivacyPolicy);
+                                accept.setOnClickListener(new View.OnClickListener()
+                                {
+                                    @Override
+                                    public void onClick(View v)
+                                    {
+                                        //Cambia en base el status a aceptado y lo deja pasar
+                                        dialog.dismiss();
+                                        changePrivacyPolicyStatus( datos_usuario.getAssociateId(),datos_usuario.getCompanyid(),true);
+                                        grantAccess(datos_usuario);
+                                    }
+                                });
+                                dialog.show();
+                            }
                         }
                         else
                         {
-                            Toast.makeText(LoginActivity.this,getString(R.string.mustAcceptPP),Toast.LENGTH_SHORT).show();
-                            //AQUI LE MOSTRAREMOS EL AVISO DE PRIVACIDAD
-                            //SI LO ACEPTA LE DEBEMOS DECIR AL API QUE UPDATEE ESA BANDERA
-                            final Dialog dialog = new Dialog( LoginActivity.this );
-                            dialog.setContentView(R.layout.dialog_aviso_privacidad);
-                            dialog.setTitle( getResources().getString(R.string.privacyPolicyTitle) );
-
-                            Button dismiss = (Button) dialog.findViewById(R.id.bttn_closePrivacyPolicy);
-                            dismiss.setOnClickListener(new View.OnClickListener()
-                            {
-                                @Override
-                                public void onClick(View view)
-                                {
-                                    dialog.dismiss();
-                                }
-                            });
-
-                            Button accept = (Button) dialog.findViewById(R.id.bttn_closePrivacyPolicy);
-                            accept.setOnClickListener(new View.OnClickListener()
-                            {
-                                @Override
-                                public void onClick(View v)
-                                {
-                                    //Cambia en base el status a aceptado y lo deja pasar
-                                    dialog.dismiss();
-                                    changePrivacyPolicyStatus( datos_usuario.getAssociateId(),datos_usuario.getCompanyid(),true);
-                                    grantAccess(datos_usuario);
-                                }
-                            });
-                            dialog.show();
+                            Toast.makeText(LoginActivity.this, getString( R.string.msg_wrong_user_password ),Toast.LENGTH_LONG).show();
                         }
-                    }
-                    else
-                    {
-                        Toast.makeText(LoginActivity.this, getString( R.string.msg_wrong_user_password ),Toast.LENGTH_LONG).show();
-                    }
 
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                    finally
+                    {
+                        pdia.dismiss();
+                    }
                 }
-                catch (Exception e)
+
+            }, new Response.ErrorListener()
+            {
+                @Override
+                public void onErrorResponse(VolleyError error)
                 {
-                    e.printStackTrace();
-                }
-                finally
-                {
+                    error.printStackTrace();
                     pdia.dismiss();
                 }
-            }
-
-        }, new Response.ErrorListener()
-        {
-            @Override
-            public void onErrorResponse(VolleyError error)
-            {
-                error.printStackTrace();
-                pdia.dismiss();
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError
-            {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Authorization", "Basic amF2aWVyOjEyMw=="); //BIEN NACO HARDCODEADO
-                return headers;
-            }
-        };
-        Requester.getInstance().addToRequestQueue(preResetPwd);
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError
+                {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Authorization", "Basic amF2aWVyOjEyMw=="); //BIEN NACO HARDCODEADO
+                    return headers;
+                }
+            };
+            Requester.getInstance().addToRequestQueue(loginRequest);
+        }
     }
     public void changePrivacyPolicyStatus(String associateId,long companyid,boolean privacyFlag)
     {
@@ -285,7 +300,7 @@ public class LoginActivity extends AppCompatActivity
         mRealm.beginTransaction(); //Guardamos en base al usuario que pasara
             User realm_datos = mRealm.copyToRealm(user);
         mRealm.commitTransaction();
-        //TODO El codigo pide que le hagamos una encuesta pero nel
+        //TODO Algo de una encuesta?
         startActivity(new Intent().setClass(LoginActivity.this,MainActivity.class)); //Llamar Main
         finish();                                                                    //Y matar Login
     }

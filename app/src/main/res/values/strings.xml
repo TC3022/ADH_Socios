@@ -34,4 +34,7 @@
     <string name="change_password_success">Your new password was set succesfully</string>
     <string name="change_password_fail">Error changing password, contact the admin</string>
     <string name="wrong_email">Wrong email</string>
+
+    <string name="ubiquitous">Ubiquitous</string>
+
 </resources>
