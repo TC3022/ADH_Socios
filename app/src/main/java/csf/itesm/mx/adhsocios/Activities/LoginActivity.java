@@ -35,11 +35,6 @@ import csf.itesm.mx.adhsocios.Requester;
 import csf.itesm.mx.adhsocios.models.User;
 import io.realm.Realm;
 
-//TODO CAMBIAR IDIOMA
-
-//TODO Disenar nuevas pantallas
-    //TODO Agregar Nuevas Pantallas
-
 public class LoginActivity extends AppCompatActivity
 {
     @BindView(R.id.hyperlinkPrivacyPolicy) LinkableTextView hlink_policy;

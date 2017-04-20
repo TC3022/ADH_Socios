@@ -33,6 +33,7 @@ public class Parser
         b.putLong("compId",u.getCompanyid());
         b.putBoolean("logged",u.isLogged());
         b.putDouble("estat",u.getEstatura());
+        b.putString("host",u.getHost());
         return b;
     }
     public static User UserFromBundle(Bundle b)
@@ -47,6 +48,7 @@ public class Parser
         u.setCompanyid( b.getLong("compId") );
         u.setLogged( b.getBoolean("logged") );
         u.setEstatura( b.getDouble("estat") );
+        u.setHost(b.getString("host"));
         return u;
     }
 

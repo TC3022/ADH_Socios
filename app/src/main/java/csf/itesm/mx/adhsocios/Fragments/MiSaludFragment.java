@@ -76,7 +76,7 @@ public class MiSaludFragment extends Fragment
 
     void loadSalud()
     {
-        String url = getResources().getString(R.string.api_host) + String.format(ep_getExpediente,mUser.getAssociateId(),mUser.getCompanyid());
+        String url = mUser.getHost() + String.format(ep_getExpediente,mUser.getAssociateId(),mUser.getCompanyid());
         Log.d(TAG,url);
         JsonArrayRequest setPassword = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>()
         {
