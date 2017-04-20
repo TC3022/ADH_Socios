@@ -25,6 +25,9 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import csf.itesm.mx.adhsocios.Fragments.MiSaludFragment;
 import csf.itesm.mx.adhsocios.Fragments.MisResultadosFragment;
 import csf.itesm.mx.adhsocios.R;
@@ -53,15 +56,24 @@ public class MainActivity extends AppCompatActivity implements MisResultadosFrag
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    private ViewPager mViewPager;
+
+    @BindView(R.id.container) ViewPager mViewPager;
+    @BindView(R.id.fab) FloatingActionButton fab;
+
+
+    @OnClick
+    public void fabClick(View view)
+    {
+        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
-        //IMPORTANTE, ESTO ES LO QUE YO AGREGUE
         mRealm = Realm.getDefaultInstance();
         user = mRealm.where(User.class).findFirst();
 
@@ -82,17 +94,27 @@ public class MainActivity extends AppCompatActivity implements MisResultadosFrag
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener()
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
         {
             @Override
-            public void onClick(View view)
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+            @Override
+            public void onPageSelected(final int position)
             {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                switch (position)
+                {
+                    case 0:
+                    case 2:
+                        fab.show();
+                        break;
+                    case 1:
+                        fab.hide();
+                        break;
+                }
             }
         });
-
     }
 
     void setAdapter()
@@ -101,7 +123,6 @@ public class MainActivity extends AppCompatActivity implements MisResultadosFrag
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         //Layout
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
