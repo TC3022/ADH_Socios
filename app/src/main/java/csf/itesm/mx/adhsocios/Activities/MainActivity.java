@@ -74,8 +74,8 @@ public class MainActivity extends AppCompatActivity implements MisResultadosFrag
         Log.d(TAG, String.format("%s %s %sm",user.getAssociateId(),user.getNmComplete(),user.getEstatura()) );
 
         fragments = new ArrayList<>();
-        fragments.add( MisResultadosFragment.newInstance(user)); //Elemento 0 de tabs
-        fragments.add( MiSaludFragment.newInstance(user)); //Elemento 1
+        fragments.add( MiSaludFragment.newInstance(user) ); //Elemento 0 de tabs
+        fragments.add( MisResultadosFragment.newInstance(user)); //Elemento 1
         fragments.add( PlaceholderFragment.newInstance(3) );
 
         setAdapter();

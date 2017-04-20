@@ -29,4 +29,12 @@ public class ResultPackage
     public void setValue(double value) {
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return "ResultPackage{" +
+                "value=" + value +
+                ", date='" + date + '\'' +
+                '}';
+    }
 }

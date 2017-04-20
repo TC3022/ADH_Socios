@@ -21,8 +21,8 @@
     <string name="action_logout">Cerrar sesión</string>
     <string name="section_format">Hola mundo desde sección: %1$d</string>
     <string name="authenticate">Autenticando...</string>
-    <string name="section01">Mis Resultados</string>
-    <string name="section02">Mi Salud</string>
+    <string name="section02">Mis Resultados</string>
+    <string name="section01">Mi Salud</string>
     <string name="section03">SECCION 3</string>
 
     <string name="msg_wrong_user_password">Usuario/Contraseña incorrectos</string>

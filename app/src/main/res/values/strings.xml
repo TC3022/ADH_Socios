@@ -21,8 +21,8 @@
     <string name="action_logout">Logout</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="authenticate">Authenticating...</string>
-    <string name="section01">My Results</string>
-    <string name="section02">My Health</string>
+    <string name="section02">My Results</string>
+    <string name="section01">My Health</string>
     <string name="section03">SECTION 3</string>
 
     <string name="msg_wrong_user_password">Wrong User/Password</string>

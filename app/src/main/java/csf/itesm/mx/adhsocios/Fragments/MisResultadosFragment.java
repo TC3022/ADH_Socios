@@ -7,8 +7,6 @@ import android.graphics.DashPathEffect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,11 +35,12 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import csf.itesm.mx.adhsocios.Adapters.ResultsAdapter;
 import csf.itesm.mx.adhsocios.R;
 import csf.itesm.mx.adhsocios.Requester;
 import csf.itesm.mx.adhsocios.Utils.Parser;
+import csf.itesm.mx.adhsocios.models.ResultPackage;
 import csf.itesm.mx.adhsocios.models.User;
+import csf.itesm.mx.adhsocios.models.UserResults;
 
 public class MisResultadosFragment extends Fragment
 {
@@ -90,10 +89,11 @@ public class MisResultadosFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_mis_resultados, container, false);
         unbinder = ButterKnife.bind(this, view);
         loadResults();
-        loadGrafica();
+        //loadDummyChart();
         return view;
     }
-    void loadGrafica()
+
+    void loadDummyChart()
     {
         List<Entry> e = new ArrayList<>();
 
@@ -136,9 +136,14 @@ public class MisResultadosFragment extends Fragment
             @Override
             public void onResponse(JSONArray response)
             {
-
-                Log.d(TAG,response.toString());
-                //mResultsAdapter.setResults(Parser.parseUserResults(response));
+                UserResults ur = Parser.parseUserResults(response);
+                //Log.d(TAG,ur.toString());
+                //TODO PASAR A STRINGS Y SUS TRADUCCIONES
+                //TODO QUE SE ORGANICE POR FECHAS
+                setChart("IMC",ur.getBmi() , gbmi );
+                setChart("Grasa",ur.getFat() , gfat );
+                setChart("Musculo" , ur.getMuscle() , gmuscle );
+                setChart("Peso",ur.getWeight() , gweight );
             }
 
         }, new Response.ErrorListener()
@@ -158,6 +163,44 @@ public class MisResultadosFragment extends Fragment
             }
         };
         Requester.getInstance().addToRequestQueue(setPassword);
+    }
+
+    private void setChart(String title,List<ResultPackage> results, LineChart chart)
+    {
+        //TODO, UNA VEZ QUE SE ORDENE POR FECHAS DEBEMOS GENERAR DELTAS
+        //DELTA = LA FECHA MAS LEJANA - LA FECHA MAS CERCANA
+
+        List<Entry> e = new ArrayList<>();
+
+        for (int i = 0; i < results.size();++i)
+        {
+            e.add(new BarEntry(i, (float) results.get(i).getValue()));
+        }
+
+        LineDataSet ds = new LineDataSet(e,title);
+
+        ds.enableDashedLine(10f, 5f, 0f);
+        ds.enableDashedHighlightLine(10f, 5f, 0f);
+        ds.setColor(Color.BLUE);
+        ds.setCircleColor(Color.BLACK);
+        ds.setLineWidth(1f);
+        ds.setCircleRadius(3f);
+        ds.setDrawCircleHole(false);
+        ds.setValueTextSize(9f);
+        //ds.setDrawFilled(true);
+        ds.setFormLineWidth(1f);
+        ds.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
+        ds.setFormSize(15.f);
+
+        ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+        dataSets.add(ds); // add the datasets
+
+        // create a data object with the datasets
+        LineData data = new LineData(dataSets);
+        // set data
+        chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        chart.setData(data);
+        chart.invalidate();
     }
 
     @Override

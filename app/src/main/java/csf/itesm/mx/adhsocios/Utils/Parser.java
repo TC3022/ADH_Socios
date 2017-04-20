@@ -77,12 +77,12 @@ public class Parser
                     current = weights.getJSONObject(i);
                     ur.addBmi( new ResultPackage( current.getDouble("Value"), current.getString("Date") ));
                 }
-                for (int i = 0; i < bmi.length(); i++)
+                for (int i = 0; i < fat.length(); i++)
                 {
                     current = fat.getJSONObject(i);
                     ur.addFat( new ResultPackage( current.getDouble("Value"), current.getString("Date") ));
                 }
-                for (int i = 0; i < bmi.length(); i++)
+                for (int i = 0; i < muscle.length(); i++)
                 {
                     current = muscle.getJSONObject(i);
                     ur.addMuscle( new ResultPackage( current.getDouble("Value"), current.getString("Date") ));
@@ -99,6 +99,8 @@ public class Parser
         }
         return ur;
     }
+
+
     public static List<UserRecord> parseUserRecords(JSONArray response)
     {
         List<UserRecord> records = new ArrayList<>();
