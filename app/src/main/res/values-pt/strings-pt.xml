@@ -23,7 +23,7 @@
     <string name="authenticate">Autenticando...</string>
     <string name="section02">Meus Resultados</string>
     <string name="section01">A Minha Saúde</string>
-    <string name="section03">SEÇÃO 3</string>
+    <string name="section03">Meus Testes</string>
 
     <string name="msg_wrong_user_password">Usuário/senha errado</string>
     <string name="mustAcceptPP">Você deve aceitar a política de privacidade</string>

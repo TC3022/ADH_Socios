@@ -14,27 +14,21 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-
-import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import csf.itesm.mx.adhsocios.Fragments.MiSaludFragment;
+import csf.itesm.mx.adhsocios.Fragments.MisEstudiosFragment;
 import csf.itesm.mx.adhsocios.Fragments.MisResultadosFragment;
 import csf.itesm.mx.adhsocios.R;
 import csf.itesm.mx.adhsocios.models.User;
 import io.realm.Realm;
 
-public class MainActivity extends AppCompatActivity implements MisResultadosFragment.onMisResultadosInteractionListener,MiSaludFragment.OnMiSaludInteractionListener
+public class MainActivity extends AppCompatActivity implements MisResultadosFragment.onMisResultadosInteractionListener,MiSaludFragment.OnMiSaludInteractionListener, MisEstudiosFragment.OnMisEstudiosInteractionListener
 {
 
     /**
@@ -50,9 +44,6 @@ public class MainActivity extends AppCompatActivity implements MisResultadosFrag
 
     private User user;
     private Realm mRealm;
-
-    private List<Fragment> fragments;
-
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -85,10 +76,6 @@ public class MainActivity extends AppCompatActivity implements MisResultadosFrag
 
         Log.d(TAG, String.format("%s %s %sm",user.getAssociateId(),user.getNmComplete(),user.getEstatura()) );
 
-        fragments = new ArrayList<>();
-        fragments.add( MiSaludFragment.newInstance(user) ); //Elemento 0 de tabs
-        fragments.add( MisResultadosFragment.newInstance(user)); //Elemento 1
-        fragments.add( PlaceholderFragment.newInstance(3) );
 
         setAdapter();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -160,51 +147,13 @@ public class MainActivity extends AppCompatActivity implements MisResultadosFrag
     }
 
     @Override
-    public void onMisResultadosInteraction(Uri uri)
-    {
-
-    }
+    public void onMisResultadosInteraction(Uri uri) {}
 
     @Override
-    public void OnMiSaludInteraction(Uri uri) {
+    public void OnMiSaludInteraction(Uri uri) {}
 
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber)
-        {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_dummy, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
-        }
-    }
+    @Override
+    public void OnMisEstudiosInteraction() {}
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -220,7 +169,16 @@ public class MainActivity extends AppCompatActivity implements MisResultadosFrag
         @Override
         public Fragment getItem(int position)
         {
-            return fragments.get(position);
+            switch (position)
+            {
+                case 0:
+                    return MiSaludFragment.newInstance(user);
+                case 1:
+                    return MisResultadosFragment.newInstance(user);
+                default:
+                    return MisEstudiosFragment.newInstance(user);
+            }
+
         }
 
         @Override

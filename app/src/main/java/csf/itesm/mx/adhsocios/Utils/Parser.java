@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import csf.itesm.mx.adhsocios.models.Estudio;
 import csf.itesm.mx.adhsocios.models.ResultPackage;
 import csf.itesm.mx.adhsocios.models.User;
 import csf.itesm.mx.adhsocios.models.UserHealthRecord;
@@ -160,6 +161,42 @@ public class Parser
             e.printStackTrace();
         }
         return records;
+
+    }
+
+    public static List<Estudio> parseEstudios(JSONArray response)
+    {
+        List<Estudio> est= new ArrayList<>();
+        try
+        {
+            if (  response.getJSONObject(0).getString("Code").equals("01"))  //Supongo que 01 es exito
+            {
+                JSONArray estudios = response.getJSONArray(1);
+                Estudio current;
+                for (int i = 0; i < estudios.length(); i++)
+                {
+                    current = new Estudio();
+                    current.setName(  estudios.getJSONObject(i).getString("DescriptionReasonDetail") );
+
+                    //TODO AGREGAR PARSEO DE FECHA
+                    //MEJORAR XML PARA AGREGAR LA FECHA
+                    //current.setStart( getDateFromString(estudios.getJSONObject(i).getString("FechaInicio")  )  );
+
+
+                    est.add(current);
+                }
+            }
+            else
+            {
+                Log.e("parseMiSalud","Respuesta error del servicio");
+            }
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
+        return est;
 
     }
 }
