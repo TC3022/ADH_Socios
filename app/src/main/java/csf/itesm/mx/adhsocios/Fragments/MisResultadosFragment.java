@@ -139,7 +139,7 @@ public class MisResultadosFragment extends Fragment
                 UserResults ur = Parser.parseUserResults(response);
                 //Log.d(TAG,ur.toString());
                 //TODO PASAR A STRINGS Y SUS TRADUCCIONES
-                //TODO QUE SE ORGANICE POR FECHAS
+                //TODO INTERVALOS DE FECHAS
                 setChart("IMC",ur.getBmi() , gbmi );
                 setChart("Grasa",ur.getFat() , gfat );
                 setChart("Musculo" , ur.getMuscle() , gmuscle );

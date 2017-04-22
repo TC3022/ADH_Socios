@@ -17,11 +17,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import csf.itesm.mx.adhsocios.Adapters.SaludAdapter;
@@ -29,7 +27,7 @@ import csf.itesm.mx.adhsocios.R;
 import csf.itesm.mx.adhsocios.Requester;
 import csf.itesm.mx.adhsocios.Utils.Parser;
 import csf.itesm.mx.adhsocios.models.User;
-import csf.itesm.mx.adhsocios.models.UserRecord;
+import csf.itesm.mx.adhsocios.models.UserHealthRecord;
 
 public class MiSaludFragment extends Fragment
 {
@@ -67,7 +65,7 @@ public class MiSaludFragment extends Fragment
     {
         View view = inflater.inflate(R.layout.fragment_mi_salud, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_salud);
-        mSaludAdapter = new SaludAdapter(CONTEXT,new ArrayList<UserRecord>());
+        mSaludAdapter = new SaludAdapter(CONTEXT,new ArrayList<UserHealthRecord>());
         mRecyclerView.setLayoutManager( new LinearLayoutManager(CONTEXT) );
         mRecyclerView.setAdapter( mSaludAdapter );
         loadSalud();

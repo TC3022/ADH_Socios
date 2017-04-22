@@ -2,17 +2,21 @@ package csf.itesm.mx.adhsocios.Utils;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import csf.itesm.mx.adhsocios.models.ResultPackage;
 import csf.itesm.mx.adhsocios.models.User;
-import csf.itesm.mx.adhsocios.models.UserRecord;
+import csf.itesm.mx.adhsocios.models.UserHealthRecord;
 import csf.itesm.mx.adhsocios.models.UserResults;
 
 /**
@@ -50,6 +54,24 @@ public class Parser
         u.setEstatura( b.getDouble("estat") );
         u.setHost(b.getString("host"));
         return u;
+    }
+
+    public static Date getDateFromString(String s) //Usa el formato que nos regresa la base
+    {
+        Date d = null;
+        try
+        {
+            SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+            d = dt.parse(s);
+        }
+        catch (ParseException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            return d;
+        }
     }
 
     public static UserResults parseUserResults(JSONArray response)
@@ -101,21 +123,32 @@ public class Parser
     }
 
 
-    public static List<UserRecord> parseUserRecords(JSONArray response)
+    public static List<UserHealthRecord> parseUserRecords(JSONArray response)
     {
-        List<UserRecord> records = new ArrayList<>();
+        List<UserHealthRecord> records = new ArrayList<>();
         try
         {
             if (  response.getJSONObject(0).getString("Code").equals("01"))  //Supongo que 01 es exito
             {
                 JSONArray expediente = response.getJSONArray(1);
-                UserRecord current;
-                for (int i = 0; i < expediente.length() ; i++)
+                UserHealthRecord current;
+                try
                 {
-                    current = new UserRecord();
-                    current.setDescription(expediente.getJSONObject(i).getString("Description"));
-                    records.add(current);
+                    for (int i = 0; i < expediente.length() - 1; i+=2) //0 , 2, 4 seran titulos, los nones son descripciones
+                    {
+                        current = new UserHealthRecord();
+                        current.setTitle( expediente.getJSONObject(i).getString("Description") );
+                        current.setDescription( expediente.getJSONObject(i+1).getString("Description") );
+                        current.setDate( getDateFromString( expediente.getJSONObject(i).getString("DateFile")  ));
+                        records.add(current);
+                    }
                 }
+                catch (Exception e)
+                {
+                    Log.e("parseaMiSalud","ERROR AL GENERAR ARREGLO DE RESULTADOS DE SALUD, Checar size del array");
+                    e.printStackTrace();
+                }
+
             }
             else
             {

@@ -7,10 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.Date;
 import java.util.List;
 
 import csf.itesm.mx.adhsocios.R;
-import csf.itesm.mx.adhsocios.models.UserRecord;
+import csf.itesm.mx.adhsocios.models.UserHealthRecord;
 
 /**
  * Created by rubcuadra on 2/20/17.
@@ -18,16 +19,16 @@ import csf.itesm.mx.adhsocios.models.UserRecord;
 
 public class SaludAdapter extends RecyclerView.Adapter<SaludAdapter.ViewHolder>
 {
-    private List<UserRecord> records;
+    private List<UserHealthRecord> records;
     private Activity activity;
 
-    public SaludAdapter(Activity activity, List<UserRecord> res)
+    public SaludAdapter(Activity activity, List<UserHealthRecord> res)
     {
         this.records = res;
         this.activity = activity;
     }
 
-    public void addRecords(List<UserRecord> recs )
+    public void addRecords(List<UserHealthRecord> recs )
     {
         this.records.addAll(recs);
         notifyDataSetChanged();
@@ -43,7 +44,10 @@ public class SaludAdapter extends RecyclerView.Adapter<SaludAdapter.ViewHolder>
     @Override
     public void onBindViewHolder(ViewHolder holder, int position)
     {
+        Date d = records.get(position).getDate();
         holder.description.setText( records.get(position).getDescription() );
+        holder.title.setText( records.get(position).getTitle() );
+        holder.date.setText(d!=null?String.format("%1$tY-%1$tm-%1$td",d) :"");
     }
 
     @Override
@@ -55,12 +59,16 @@ public class SaludAdapter extends RecyclerView.Adapter<SaludAdapter.ViewHolder>
     class ViewHolder extends RecyclerView.ViewHolder
     {
         protected TextView description;
+        protected TextView title;
+        protected TextView date;
 
 
         public ViewHolder(View view)
         {
             super(view);
             description = (TextView) view.findViewById( R.id.salud_description);
+            title = (TextView) view.findViewById( R.id.salud_title);
+            date= (TextView) view.findViewById( R.id.salud_date);
         }
     }
 
