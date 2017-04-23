@@ -80,7 +80,10 @@ public class MiSaludFragment extends Fragment
             @Override
             public void onResponse(JSONArray response)
             {
-                mSaludAdapter.addRecords( Parser.parseUserRecords(response) );
+                //TODO IF PROD
+                    mSaludAdapter.addRecords( Parser.parseUserRecords(response) );
+                //ELSE
+                    //Parser.NUESTROPARSER
             }
 
         }, new Response.ErrorListener()

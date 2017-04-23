@@ -172,6 +172,8 @@ public class LoginActivity extends AppCompatActivity
                             datos_usuario.setAssociateId( data2.getString("AssociateId"));
                             datos_usuario.setNmComplete( datos_usuario.getFirtname()+" "+datos_usuario.getLastname() );
                             datos_usuario.setLogged(true);
+
+                            datos_usuario.setProd( true );
                             datos_usuario.setHost( getResources().getString(R.string.api_host) );
 
                             //PreferenceManager.getDefaultSharedPreferences(LoginActivity.this).edit().putString("token", response.getString("token")).apply();
