@@ -97,22 +97,22 @@ public class Parser
                 for (int i = 0; i < weights.length(); i++)
                 {
                     current = weights.getJSONObject(i);
-                    ur.addWeight( new ResultPackage( current.getDouble("Value"), current.getString("Date") ));
+                    ur.addWeight( new ResultPackage(  current.getDouble("Value"),  getDateFromString(current.getString("Date"),FORMAT) ));
                 }
                 for (int i = 0; i < bmi.length(); i++)
                 {
                     current = weights.getJSONObject(i);
-                    ur.addBmi( new ResultPackage( current.getDouble("Value"), current.getString("Date") ));
+                    ur.addBmi( new ResultPackage( current.getDouble("Value"), getDateFromString(current.getString("Date"),FORMAT) ));
                 }
                 for (int i = 0; i < fat.length(); i++)
                 {
                     current = fat.getJSONObject(i);
-                    ur.addFat( new ResultPackage( current.getDouble("Value"), current.getString("Date") ));
+                    ur.addFat( new ResultPackage( current.getDouble("Value"), getDateFromString(current.getString("Date"),FORMAT) ));
                 }
                 for (int i = 0; i < muscle.length(); i++)
                 {
                     current = muscle.getJSONObject(i);
-                    ur.addMuscle( new ResultPackage( current.getDouble("Value"), current.getString("Date") ));
+                    ur.addMuscle( new ResultPackage( current.getDouble("Value"), getDateFromString(current.getString("Date"),FORMAT) ));
                 }
             }
             else

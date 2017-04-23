@@ -37,4 +37,26 @@
     <string name="ubiquitous">Ubiquitous</string>
 
     <string name="pendingTest">PENDENTE</string>
+    <string name="bmi">IMC</string>
+    <string name="fat">Graxa</string>
+    <string name="muscle">Músculo</string>
+    <string name="weight">Peso</string>
+
+    <string name="since">desde</string>
+
+    <string-array name="months">
+        <item>Y</item>
+        <item>Jan</item>
+        <item>Fev</item>
+        <item>Mar</item>
+        <item>Abr</item>
+        <item>Mai</item>
+        <item>Jun</item>
+        <item>Jul</item>
+        <item>Ago</item>
+        <item>Set</item>
+        <item>Out</item>
+        <item>Nov</item>
+        <item>Dez</item>
+    </string-array>
 </resources>

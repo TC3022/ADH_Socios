@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,20 +19,39 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.BubbleData;
+import com.github.mikephil.charting.data.BubbleDataSet;
+import com.github.mikephil.charting.data.BubbleEntry;
+import com.github.mikephil.charting.data.CandleData;
+import com.github.mikephil.charting.data.CandleDataSet;
+import com.github.mikephil.charting.data.CandleEntry;
+import com.github.mikephil.charting.data.CombinedData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.ScatterData;
+import com.github.mikephil.charting.data.ScatterDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.json.JSONArray;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,10 +66,10 @@ import io.realm.Realm;
 
 public class MisResultadosFragment extends Fragment
 {
-    @BindView(R.id.grafica_bmi) LineChart gbmi;
-    @BindView(R.id.grafica_fat) LineChart gfat;
-    @BindView(R.id.grafica_muscle) LineChart gmuscle;
-    @BindView(R.id.grafica_weight) LineChart gweight;
+    @BindView(R.id.grafica_bmi) CombinedChart gbmi;
+    @BindView(R.id.grafica_fat) CombinedChart gfat;
+    @BindView(R.id.grafica_muscle) CombinedChart gmuscle;
+    @BindView(R.id.grafica_weight) CombinedChart gweight;
 
     private User mUser;
     private Activity CONTEXT;
@@ -56,6 +77,8 @@ public class MisResultadosFragment extends Fragment
     private static final String ep_getResults="GetMyResults?associateId=%s&companyId=%s";
     private onMisResultadosInteractionListener mListener;
     private Unbinder unbinder;
+
+    private String[] mMonths;
 
     public MisResultadosFragment() {}
 
@@ -78,6 +101,7 @@ public class MisResultadosFragment extends Fragment
         super.onCreate(savedInstanceState);
         CONTEXT = getActivity();
         mUser = Realm.getDefaultInstance().where(User.class).findFirst();
+        mMonths = getResources().getStringArray(R.array.months);
     }
 
     @Override
@@ -87,46 +111,11 @@ public class MisResultadosFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_mis_resultados, container, false);
         unbinder = ButterKnife.bind(this, view);
         loadResults();
-        //loadDummyChart();
         return view;
     }
 
-    void loadDummyChart()
-    {
-        List<Entry> e = new ArrayList<>();
-
-        for (int i = 0; i< 12;++i)
-        {
-            e.add(new BarEntry(i,i*i));
-        }
-
-        LineDataSet ds = new LineDataSet(e,"# Calls");
-
-        ds.enableDashedLine(10f, 5f, 0f);
-        ds.enableDashedHighlightLine(10f, 5f, 0f);
-        ds.setColor(Color.BLUE);
-        ds.setCircleColor(Color.BLACK);
-        ds.setLineWidth(1f);
-        ds.setCircleRadius(3f);
-        ds.setDrawCircleHole(false);
-        ds.setValueTextSize(9f);
-        //ds.setDrawFilled(true);
-        ds.setFormLineWidth(1f);
-        ds.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
-        ds.setFormSize(15.f);
-
-        ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-        dataSets.add(ds); // add the datasets
-
-        // create a data object with the datasets
-        LineData data = new LineData(dataSets);
-        // set data
-        gbmi.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-        gbmi.setData(data);
-    }
     void loadResults()
     {
-
         String url = mUser.getHost() + String.format(ep_getResults,mUser.getAssociateId(),mUser.getCompanyid());
         Log.d(TAG,url);
         JsonArrayRequest setPassword = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>()
@@ -135,13 +124,11 @@ public class MisResultadosFragment extends Fragment
             public void onResponse(JSONArray response)
             {
                 UserResults ur = Parser.parseUserResults(response);
-                //Log.d(TAG,ur.toString());
-                //TODO PASAR A STRINGS Y SUS TRADUCCIONES
-                //TODO INTERVALOS DE FECHAS
-                setChart("IMC",ur.getBmi() , gbmi );
-                setChart("Grasa",ur.getFat() , gfat );
-                setChart("Musculo" , ur.getMuscle() , gmuscle );
-                setChart("Peso",ur.getWeight() , gweight );
+
+                setCombinedChart( getString(R.string.bmi) ,ur.getBmi() , gbmi );
+                setCombinedChart(getString(R.string.fat),ur.getFat() , gfat );
+                setCombinedChart(getString(R.string.muscle),ur.getMuscle() , gmuscle);
+                setCombinedChart(getString(R.string.weight),ur.getWeight() , gweight );
             }
 
         }, new Response.ErrorListener()
@@ -163,46 +150,86 @@ public class MisResultadosFragment extends Fragment
         Requester.getInstance().addToRequestQueue(setPassword);
     }
 
-    private void setChart(String title,List<ResultPackage> results, LineChart chart)
+    private LineData generateLineData(String t, List<ResultPackage> lrp)
     {
-        //TODO, UNA VEZ QUE SE ORDENE POR FECHAS DEBEMOS GENERAR DELTAS
-        //DELTA = LA FECHA MAS LEJANA - LA FECHA MAS CERCANA
+        LineData d = new LineData();
 
-        List<Entry> e = new ArrayList<>();
+        ArrayList<Entry> entries = new ArrayList<Entry>();
 
-        for (int i = 0; i < results.size();++i)
+        int initialYear = lrp.get(0).getDate().getYear(); // + 1900 y es la fecha real
+
+        for (int j = 0; j < lrp.size() ; j++)
+            entries.add(new Entry(((lrp.get(j).getDate().getYear()-initialYear)*12) + lrp.get(j).getDate().getMonth()+1, (float) lrp.get(j).getValue()));
+
+        LineDataSet set = new LineDataSet(entries, t );
+        set.setColor(  ContextCompat.getColor(CONTEXT,R.color.colorAccent) );
+        set.setLineWidth(2.5f);
+        set.setCircleColor( Color.rgb(240, 238, 70));
+        set.setCircleRadius(4f);
+        set.setFillColor(   Color.rgb(240, 238, 70));
+        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        set.setDrawValues(true);
+        set.setValueTextSize(10f);
+        set.setValueTextColor(Color.rgb(0,0,0));
+
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        d.addDataSet(set);
+
+        return d;
+    }
+
+
+    private void setCombinedChart(String s, final List<ResultPackage> lrp, CombinedChart chrt)
+    {
+        chrt.getDescription().setEnabled(false);
+        chrt.setBackgroundColor(Color.WHITE);
+        chrt.setDrawGridBackground(false);
+        chrt.setDrawBarShadow(false);
+        chrt.setHighlightFullBarEnabled(false);
+
+        Legend l = chrt.getLegend();
+        l.setWordWrapEnabled(true);
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        l.setDrawInside(false);
+
+        //AXIS
+        chrt.getAxisRight().setEnabled(false);//Quitar RIGHT
+
+        YAxis leftAxis = chrt.getAxisLeft();
+        leftAxis.setDrawGridLines(false);
+        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+
+
+        XAxis xAxis = chrt.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); //Only Bottom
+        xAxis.setAxisMinimum(0f);
+        xAxis.setGranularity(1f);
+        xAxis.setValueFormatter(new IAxisValueFormatter()
         {
-            e.add(new BarEntry(i, (float) results.get(i).getValue()));
-        }
+            @Override
+            public String getFormattedValue(float value, AxisBase axis)
+            {
+                if ( value % mMonths.length == 0.0f ) //Nuestro comodin para el year
+                    return String.valueOf(lrp.get(0).getDate().getYear()+1900+  (int)(value/mMonths.length));
+                return mMonths[(int) value % mMonths.length];
+            }
+        });
 
-        LineDataSet ds = new LineDataSet(e,title);
+        CombinedData data = new CombinedData();
+        data.setData( generateLineData(s,lrp) );
 
-        ds.enableDashedLine(10f, 5f, 0f);
-        ds.enableDashedHighlightLine(10f, 5f, 0f);
-        ds.setColor(Color.BLUE);
-        ds.setCircleColor(Color.BLACK);
-        ds.setLineWidth(1f);
-        ds.setCircleRadius(3f);
-        ds.setDrawCircleHole(false);
-        ds.setValueTextSize(9f);
-        //ds.setDrawFilled(true);
-        ds.setFormLineWidth(1f);
-        ds.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
-        ds.setFormSize(15.f);
+        //data.setValueTypeface(mTfLight);
+        xAxis.setAxisMaximum(data.getXMax() + 1f);
 
-        ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-        dataSets.add(ds); // add the datasets
-
-        // create a data object with the datasets
-        LineData data = new LineData(dataSets);
-        // set data
-        chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-        chart.setData(data);
-        chart.invalidate();
+        chrt.setData(data);
+        chrt.invalidate(); //Refresh
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(Context context)
+    {
         super.onAttach(context);
         if (context instanceof onMisResultadosInteractionListener)
         {
@@ -220,7 +247,6 @@ public class MisResultadosFragment extends Fragment
         super.onDetach();
         mListener = null;
     }
-
 
     public interface onMisResultadosInteractionListener
     {

@@ -39,4 +39,28 @@
 
     <string name="pendingTest">PENDING</string>
 
+    <string name="bmi">BMI</string>
+    <string name="fat">Fat</string>
+    <string name="muscle">Muscle</string>
+    <string name="weight">Weight</string>
+
+    <string name="since">since</string>
+
+
+    <string-array name="months">
+        <item>Y</item>
+        <item>Jan</item>
+        <item>Feb</item>
+        <item>Mar</item>
+        <item>Apr</item>
+        <item>May</item>
+        <item>Jun</item>
+        <item>Jul</item>
+        <item>Aug</item>
+        <item>Sep</item>
+        <item>Oct</item>
+        <item>Nov</item>
+        <item>Dec</item>
+    </string-array>
+
 </resources>

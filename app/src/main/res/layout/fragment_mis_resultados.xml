@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.github.mikephil.charting.charts.LineChart
+        <com.github.mikephil.charting.charts.CombinedChart
             android:id="@+id/grafica_bmi"
             android:layout_width="0dp"
             android:layout_height="@dimen/graph_height"
@@ -23,7 +23,7 @@
             android:layout_marginTop="0dp"
             app:layout_constraintTop_toBottomOf="@+id/space2" />
 
-        <com.github.mikephil.charting.charts.LineChart
+        <com.github.mikephil.charting.charts.CombinedChart
             android:id="@+id/grafica_weight"
             android:layout_width="0dp"
             android:layout_height="@dimen/graph_height"
@@ -35,7 +35,7 @@
             android:layout_marginTop="0dp"
             app:layout_constraintTop_toBottomOf="@+id/space2" />
 
-        <com.github.mikephil.charting.charts.LineChart
+        <com.github.mikephil.charting.charts.CombinedChart
             android:id="@+id/grafica_fat"
             android:layout_width="0dp"
             android:layout_height="@dimen/graph_height"
@@ -49,7 +49,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="8dp" />
 
-        <com.github.mikephil.charting.charts.LineChart
+        <com.github.mikephil.charting.charts.CombinedChart
             android:id="@+id/grafica_muscle"
             android:layout_width="0dp"
             android:layout_height="@dimen/graph_height"
