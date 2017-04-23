@@ -37,4 +37,6 @@
 
     <string name="ubiquitous">Ubiquitous</string>
 
+    <string name="pendingTest">PENDING</string>
+
 </resources>

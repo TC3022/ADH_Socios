@@ -49,14 +49,6 @@ public class MainActivity extends AppCompatActivity implements MisResultadosFrag
      */
 
     @BindView(R.id.container) ViewPager mViewPager;
-    @BindView(R.id.fab) FloatingActionButton fab;
-
-
-    @OnClick
-    public void fabClick(View view)
-    {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -80,28 +72,6 @@ public class MainActivity extends AppCompatActivity implements MisResultadosFrag
         setAdapter();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener()
-        {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
-            @Override
-            public void onPageScrollStateChanged(int state) {}
-            @Override
-            public void onPageSelected(final int position)
-            {
-                switch (position)
-                {
-                    case 0:
-                    case 2:
-                        fab.show();
-                        break;
-                    case 1:
-                        fab.hide();
-                        break;
-                }
-            }
-        });
     }
 
     void setAdapter()
@@ -172,11 +142,11 @@ public class MainActivity extends AppCompatActivity implements MisResultadosFrag
             switch (position)
             {
                 case 0:
-                    return MiSaludFragment.newInstance(user);
+                    return MiSaludFragment.newInstance();
                 case 1:
-                    return MisResultadosFragment.newInstance(user);
+                    return MisResultadosFragment.newInstance();
                 default:
-                    return MisEstudiosFragment.newInstance(user);
+                    return MisEstudiosFragment.newInstance();
             }
 
         }

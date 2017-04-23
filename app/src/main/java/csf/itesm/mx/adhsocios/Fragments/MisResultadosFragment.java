@@ -41,6 +41,7 @@ import csf.itesm.mx.adhsocios.Utils.Parser;
 import csf.itesm.mx.adhsocios.models.ResultPackage;
 import csf.itesm.mx.adhsocios.models.User;
 import csf.itesm.mx.adhsocios.models.UserResults;
+import io.realm.Realm;
 
 public class MisResultadosFragment extends Fragment
 {
@@ -58,10 +59,10 @@ public class MisResultadosFragment extends Fragment
 
     public MisResultadosFragment() {}
 
-    public static MisResultadosFragment newInstance(User u)
+    public static MisResultadosFragment newInstance()
     {
         MisResultadosFragment fragment = new MisResultadosFragment();
-        fragment.setArguments( Parser.UserToBundle(u) );
+        //fragment.setArguments( Parser.UserToBundle(u) );
         return fragment;
     }
 
@@ -76,10 +77,7 @@ public class MisResultadosFragment extends Fragment
     {
         super.onCreate(savedInstanceState);
         CONTEXT = getActivity();
-        if (getArguments() != null)
-        {
-            mUser = Parser.UserFromBundle(getArguments());
-        }
+        mUser = Realm.getDefaultInstance().where(User.class).findFirst();
     }
 
     @Override

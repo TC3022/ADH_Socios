@@ -35,4 +35,6 @@
     <string name="change_password_fail">Error al modificar la contraseña, contacta al administrador</string>
     <string name="wrong_email">Email incorrecto</string>
     <string name="ubiquitous">Ubiquitous</string>
+
+    <string name="pendingTest">PENDIENTE</string>
 </resources>

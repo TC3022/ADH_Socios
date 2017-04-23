@@ -26,6 +26,10 @@ import csf.itesm.mx.adhsocios.models.UserResults;
 
 public class Parser
 {
+    public final static String FORMAT  = "yyyy-MM-dd'T'hh:mm:ss";
+
+    public final static String ALTERNATE_FORMAT  = "dd/MM/yyyy hh:mm:ss";
+
     public static Bundle UserToBundle(User u )
     {
         Bundle b = new Bundle();
@@ -57,12 +61,12 @@ public class Parser
         return u;
     }
 
-    public static Date getDateFromString(String s) //Usa el formato que nos regresa la base
+    public static Date getDateFromString(String s, String format) //Usa el formato que nos regresa la base
     {
         Date d = null;
         try
         {
-            SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+            SimpleDateFormat dt = new SimpleDateFormat(format);
             d = dt.parse(s);
         }
         catch (ParseException e)
@@ -140,7 +144,7 @@ public class Parser
                         current = new UserHealthRecord();
                         current.setTitle( expediente.getJSONObject(i).getString("Description") );
                         current.setDescription( expediente.getJSONObject(i+1).getString("Description") );
-                        current.setDate( getDateFromString( expediente.getJSONObject(i).getString("DateFile")  ));
+                        current.setDate( getDateFromString( expediente.getJSONObject(i).getString("DateFile") ,FORMAT));
                         records.add(current);
                     }
                 }
@@ -167,6 +171,7 @@ public class Parser
     public static List<Estudio> parseEstudios(JSONArray response)
     {
         List<Estudio> est= new ArrayList<>();
+
         try
         {
             if (  response.getJSONObject(0).getString("Code").equals("01"))  //Supongo que 01 es exito
@@ -177,18 +182,23 @@ public class Parser
                 {
                     current = new Estudio();
                     current.setName(  estudios.getJSONObject(i).getString("DescriptionReasonDetail") );
+                    current.setId( String.valueOf(i+1) );
 
-                    //TODO AGREGAR PARSEO DE FECHA
-                    //MEJORAR XML PARA AGREGAR LA FECHA
-                    //current.setStart( getDateFromString(estudios.getJSONObject(i).getString("FechaInicio")  )  );
 
+                    current.setStart( getDateFromString( estudios.getJSONObject(i).getString("FechaInicio").substring(0,19),FORMAT));
+                    current.setEnd( getDateFromString( estudios.getJSONObject(i).getString("FechaFin").substring(0,19),FORMAT));
+
+                    if ( estudios.getJSONObject(i).getString("FechaAplico").compareTo("null") == 0  ) //Es Null, no se ha aplicado
+                        current.setApplied(null);
+                    else
+                        current.setApplied( getDateFromString( estudios.getJSONObject(i).getString("FechaAplico").substring(0,19), ALTERNATE_FORMAT )  );
 
                     est.add(current);
                 }
             }
             else
             {
-                Log.e("parseMiSalud","Respuesta error del servicio");
+                Log.e("parseEstudios","Respuesta error del servicio");
             }
         }
         catch (JSONException e)

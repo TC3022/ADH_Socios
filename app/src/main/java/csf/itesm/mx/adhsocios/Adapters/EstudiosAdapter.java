@@ -1,12 +1,15 @@
 package csf.itesm.mx.adhsocios.Adapters;
 
 import android.app.Activity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.Date;
 import java.util.List;
 
 import csf.itesm.mx.adhsocios.R;
@@ -43,10 +46,23 @@ public class EstudiosAdapter extends RecyclerView.Adapter<EstudiosAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position)
     {
-        //Date d = records.get(position).getDate();
-        //holder.description.setText( records.get(position).getDescription() );
-        holder.title.setText( estudios.get(position).getName() );
-        //holder.date.setText(d!=null?String.format("%1$tY-%1$tm-%1$td",d) :"");
+        Estudio c = estudios.get(position);
+
+        holder.title.setText( c.getName() );
+        holder.id.setText( c.getId() );
+
+        if (c.isDone())
+        {
+            holder.date.setText(String.format("%1$tY-%1$tm-%1$td", c.getApplied()));
+        }
+        else
+        {
+            //android:textColor="@android:color/holo_green_light"
+            holder.id.setTextColor( ContextCompat.getColor(activity, android.R.color.holo_red_light ) );
+            holder.date.setText( activity.getResources().getString( R.string.pendingTest )   );
+            //holder.date.setVisibility( View.INVISIBLE );
+        }
+
     }
 
     @Override
@@ -57,7 +73,7 @@ public class EstudiosAdapter extends RecyclerView.Adapter<EstudiosAdapter.ViewHo
 
     class ViewHolder extends RecyclerView.ViewHolder
     {
-        protected TextView description;
+        protected TextView id;
         protected TextView title;
         protected TextView date;
 
@@ -65,9 +81,9 @@ public class EstudiosAdapter extends RecyclerView.Adapter<EstudiosAdapter.ViewHo
         public ViewHolder(View view)
         {
             super(view);
-            description = (TextView) view.findViewById( R.id.estudio_description);
+            id = (TextView) view.findViewById( R.id.estudio_id);
             title = (TextView) view.findViewById( R.id.estudio_title);
-            date= (TextView) view.findViewById( R.id.estudio_date);
+            date= (TextView) view.findViewById( R.id.estudio_applied_date);
         }
     }
 

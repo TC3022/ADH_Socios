@@ -10,14 +10,25 @@ public class Estudio
 {
     private String name;
 
+    private String id;
     private Date start;
     private Date end;
     private Date applied; //Allows Null
 
     public Estudio(){}
-    public Estudio(String name, Date start, Date end, Date applied)
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Estudio(String name, String id, Date start, Date end, Date applied)
     {
         this.name = name;
+        this.id = id;
         this.start = start;
         this.end = end;
         this.applied = applied;

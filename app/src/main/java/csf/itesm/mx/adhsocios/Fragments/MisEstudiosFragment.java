@@ -30,6 +30,7 @@ import csf.itesm.mx.adhsocios.Requester;
 import csf.itesm.mx.adhsocios.Utils.Parser;
 import csf.itesm.mx.adhsocios.models.Estudio;
 import csf.itesm.mx.adhsocios.models.User;
+import io.realm.Realm;
 
 /**
  * Created by rubcuadra on 4/22/17.
@@ -48,10 +49,10 @@ public class MisEstudiosFragment extends Fragment
 
     public MisEstudiosFragment() {}
 
-    public static MisEstudiosFragment newInstance(User u)
+    public static MisEstudiosFragment newInstance()
     {
         MisEstudiosFragment fragment = new MisEstudiosFragment();
-        fragment.setArguments( Parser.UserToBundle(u) );
+        //fragment.setArguments( Parser.UserToBundle(u) );
         return fragment;
     }
 
@@ -60,10 +61,7 @@ public class MisEstudiosFragment extends Fragment
     {
         super.onCreate(savedInstanceState);
         CONTEXT = getActivity();
-        if (getArguments() != null)
-        {
-            mUser = Parser.UserFromBundle(getArguments());
-        }
+        mUser = Realm.getDefaultInstance().where(User.class).findFirst();
     }
 
     @Override

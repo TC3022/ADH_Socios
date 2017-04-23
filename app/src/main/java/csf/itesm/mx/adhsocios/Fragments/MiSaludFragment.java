@@ -28,6 +28,7 @@ import csf.itesm.mx.adhsocios.Requester;
 import csf.itesm.mx.adhsocios.Utils.Parser;
 import csf.itesm.mx.adhsocios.models.User;
 import csf.itesm.mx.adhsocios.models.UserHealthRecord;
+import io.realm.Realm;
 
 public class MiSaludFragment extends Fragment
 {
@@ -39,12 +40,13 @@ public class MiSaludFragment extends Fragment
     private RecyclerView mRecyclerView;
     private SaludAdapter mSaludAdapter;
     private OnMiSaludInteractionListener mListener;
+
     public MiSaludFragment() {}
 
-    public static MiSaludFragment newInstance(User u)
+    public static MiSaludFragment newInstance()
     {
         MiSaludFragment fragment = new MiSaludFragment();
-        fragment.setArguments( Parser.UserToBundle(u) );
+        //fragment.setArguments( Parser.UserToBundle(u) );
         return fragment;
     }
 
@@ -53,10 +55,7 @@ public class MiSaludFragment extends Fragment
     {
         super.onCreate(savedInstanceState);
         CONTEXT = getActivity();
-        if (getArguments() != null)
-        {
-            mUser = Parser.UserFromBundle(getArguments());
-        }
+        mUser = Realm.getDefaultInstance().where(User.class).findFirst();
     }
 
     @Override
