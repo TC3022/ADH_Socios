@@ -174,8 +174,16 @@ public class LoginActivity extends AppCompatActivity
                             datos_usuario.setNmComplete( datos_usuario.getFirtname()+" "+datos_usuario.getLastname() );
                             datos_usuario.setLogged(true);
 
-                            datos_usuario.setProd( true );
-                            datos_usuario.setHost( getResources().getString(R.string.api_host) );
+                            if (host_switch.isChecked()) //Usaremos Ubiquitous
+                            {
+                                datos_usuario.setProd( false );
+                                datos_usuario.setHost( getResources().getString(R.string.other_host) );
+                            }
+                            else
+                            {
+                                datos_usuario.setProd( true );
+                                datos_usuario.setHost( getResources().getString(R.string.api_host) );
+                            }
 
                             //PreferenceManager.getDefaultSharedPreferences(LoginActivity.this).edit().putString("token", response.getString("token")).apply();
 
