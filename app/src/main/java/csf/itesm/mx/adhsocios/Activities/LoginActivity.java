@@ -139,6 +139,7 @@ public class LoginActivity extends AppCompatActivity
 
         if (host_switch.isChecked())
         {
+            //TODO AQUI SE EMPIEZA UBIQUITOS
             pdia.dismiss();
             Toast.makeText(LoginActivity.this, "PEGARLE UBIQUITOS" ,Toast.LENGTH_SHORT).show();
             //Requester.getInstance().addToRequestQueue(loginRequest);
