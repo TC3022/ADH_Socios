@@ -137,55 +137,46 @@ public class LoginActivity extends AppCompatActivity
 
         JsonArrayRequest loginRequest = null;
 
-        if (host_switch.isChecked())
-        {
-            //TODO AQUI SE EMPIEZA UBIQUITOS
-            pdia.dismiss();
-            Toast.makeText(LoginActivity.this, "PEGARLE UBIQUITOS" ,Toast.LENGTH_SHORT).show();
-            //Requester.getInstance().addToRequestQueue(loginRequest);
-        }
-        else
-        {
-            String url = getResources().getString(R.string.api_host) + String.format(ep_getLogin,username,password);
-            Log.d(TAG,url);
-            loginRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response)
+
+        String url = getResources().getString(R.string.api_host) + String.format(ep_getLogin,username,password);
+        Log.d(TAG,url);
+        loginRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response)
+            {
+                try
                 {
-                    try
+                    JSONObject codes = response.getJSONObject(0);
+                    if (codes.getString("Code").equals("01")) //Fue exitoso y se puede logear
                     {
-                        JSONObject codes = response.getJSONObject(0);
-                        if (codes.getString("Code").equals("01")) //Fue exitoso y se puede logear
+                        Log.d("LOGIN",response.toString());
+                        JSONObject data1 = response.getJSONObject(1);
+                        JSONObject data2 = response.getJSONObject(2);
+                        Boolean noticePrivacyFlag = data2.getBoolean("NoticePrivacyFlag");
+
+                        final User datos_usuario = new User();
+                        datos_usuario.setFirtname( data2.getString("FirstName") );
+                        datos_usuario.setLastname( data2.getString("LastName") );
+                        datos_usuario.setEstatura( data2.getDouble("Stature") );
+                        datos_usuario.setGender(data2.getString("Gender") );
+                        datos_usuario.setCompanyid( data2.getLong("CompanyId"));
+                        datos_usuario.setAssociateimage( data2.getString("AssociateImage"));
+                        datos_usuario.setAssociateId( data2.getString("AssociateId"));
+                        datos_usuario.setNmComplete( datos_usuario.getFirtname()+" "+datos_usuario.getLastname() );
+                        datos_usuario.setLogged(true);
+
+                        if (host_switch.isChecked()) //Usaremos Ubiquitous
                         {
-                            Log.d("LOGIN",response.toString());
-                            JSONObject data1 = response.getJSONObject(1);
-                            JSONObject data2 = response.getJSONObject(2);
+                            datos_usuario.setProd( false );
+                            datos_usuario.setHost( getResources().getString(R.string.other_host) );
+                        }
+                        else
+                        {
+                            datos_usuario.setProd( true );
+                            datos_usuario.setHost( getResources().getString(R.string.api_host) );
+                        }
 
-                            Boolean noticePrivacyFlag = data2.getBoolean("NoticePrivacyFlag");
-
-                            final User datos_usuario = new User();
-                            datos_usuario.setFirtname( data2.getString("FirstName") );
-                            datos_usuario.setLastname( data2.getString("LastName") );
-                            datos_usuario.setEstatura( data2.getDouble("Stature") );
-                            datos_usuario.setGender(data2.getString("Gender") );
-                            datos_usuario.setCompanyid( data2.getLong("CompanyId"));
-                            datos_usuario.setAssociateimage( data2.getString("AssociateImage"));
-                            datos_usuario.setAssociateId( data2.getString("AssociateId"));
-                            datos_usuario.setNmComplete( datos_usuario.getFirtname()+" "+datos_usuario.getLastname() );
-                            datos_usuario.setLogged(true);
-
-                            if (host_switch.isChecked()) //Usaremos Ubiquitous
-                            {
-                                datos_usuario.setProd( false );
-                                datos_usuario.setHost( getResources().getString(R.string.other_host) );
-                            }
-                            else
-                            {
-                                datos_usuario.setProd( true );
-                                datos_usuario.setHost( getResources().getString(R.string.api_host) );
-                            }
-
-                            //PreferenceManager.getDefaultSharedPreferences(LoginActivity.this).edit().putString("token", response.getString("token")).apply();
+                        //PreferenceManager.getDefaultSharedPreferences(LoginActivity.this).edit().putString("token", response.getString("token")).apply();
 
                             if (noticePrivacyFlag)
                             {
@@ -259,7 +250,6 @@ public class LoginActivity extends AppCompatActivity
                 }
             };
             Requester.getInstance().addToRequestQueue(loginRequest);
-        }
     }
     public void changePrivacyPolicyStatus(String associateId,long companyid,boolean privacyFlag)
     {

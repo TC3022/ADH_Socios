@@ -95,7 +95,34 @@ public class Parser
         }
         return ur;
     }
-
+    public static List<UserHealthRecord> parseUserRecordsUbiquitous(JSONObject response)
+    {
+        List<UserHealthRecord> records = new ArrayList<>();
+        try
+        {
+            if ( response.getBoolean("success") )
+            {
+                JSONArray expediente = response.getJSONArray("data");
+                UserHealthRecord current;
+                for (int i = 0; i < expediente.length() ; i++)
+                {
+                    current = new UserHealthRecord();
+                    current.setTitle( expediente.getJSONObject(i).getString("title") );
+                    current.setDescription( expediente.getJSONObject(i).getString("description") );
+                    current.setDate( getDateFromString( expediente.getJSONObject(i).getString("date") ,FORMAT));
+                    records.add(current);
+                }
+            }
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            return records;
+        }
+    }
 
     public static List<UserHealthRecord> parseUserRecords(JSONArray response)
     {
@@ -174,8 +201,6 @@ public class Parser
         {
             e.printStackTrace();
         }
-
         return est;
-
     }
 }

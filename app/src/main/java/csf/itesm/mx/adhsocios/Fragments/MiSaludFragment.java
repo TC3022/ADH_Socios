@@ -16,7 +16,11 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.google.gson.Gson;
+
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,23 +71,46 @@ public class MiSaludFragment extends Fragment
         mSaludAdapter = new SaludAdapter(CONTEXT,new ArrayList<UserHealthRecord>());
         mRecyclerView.setLayoutManager( new LinearLayoutManager(CONTEXT) );
         mRecyclerView.setAdapter( mSaludAdapter );
-        loadSalud();
+        if (mUser.isProd()) loadSalud();
+        else                loadOtherSalud();
         return view;
+    }
+
+    void loadOtherSalud() //TODO HACER QUE LE PEGUE AL ENDPOINT CORRECTO Y USAR EL PARSER DONDE SE DEBE
+    {
+        String resp_string = "{\n" +
+                "  \"success\": true,\n" +
+                "  \"data\": [\n" +
+                "    {\n" +
+                "      \"title\": \"Reflujo nasal\",\n" +
+                "      \"date\": \"2017-02-09T12:20:20\",\n" +
+                "      \"description\": \"Se te caen los mocos\"\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}\n";
+        try
+        {
+            JSONObject response = new JSONObject(resp_string);
+            Log.d("MISALUD",response.toString());
+            mSaludAdapter.addRecords( Parser.parseUserRecordsUbiquitous(response)  );
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     void loadSalud()
     {
         String url = mUser.getHost() + String.format(ep_getExpediente,mUser.getAssociateId(),mUser.getCompanyid());
         Log.d(TAG,url);
+
         JsonArrayRequest setPassword = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>()
         {
             @Override
             public void onResponse(JSONArray response)
             {
-                //TODO IF PROD
-                    mSaludAdapter.addRecords( Parser.parseUserRecords(response) );
-                //ELSE
-                    //Parser.NUESTROPARSER
+                mSaludAdapter.addRecords( Parser.parseUserRecords(response) );
             }
 
         }, new Response.ErrorListener()
