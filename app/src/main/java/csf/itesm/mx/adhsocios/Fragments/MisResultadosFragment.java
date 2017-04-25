@@ -117,7 +117,7 @@ public class MisResultadosFragment extends Fragment
         return view;
     }
 
-    void loadOtherResults()
+    void loadOtherResults() //TODO HACER QUE LE PEGUE AL ENDPOINT CORRECTO Y USAR EL PARSER DONDE SE DEBE
     {
         String resp_string = "{\n" +
                 "  \"success\": true,\n" +

@@ -82,7 +82,7 @@ public class MisEstudiosFragment extends Fragment
         return view;
     }
 
-    void loadOtherEstudios()
+    void loadOtherEstudios() //TODO HACER QUE LE PEGUE AL ENDPOINT CORRECTO Y USAR EL PARSER DONDE SE DEBE
     {
         String resp_string = "{\n" +
                 "  \"success\": true,\n" +
