@@ -85,6 +85,11 @@ public class MiSaludFragment extends Fragment
                 "      \"title\": \"Reflujo nasal\",\n" +
                 "      \"date\": \"2017-02-09T12:20:20\",\n" +
                 "      \"description\": \"Se te caen los mocos\"\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"title\": \"Segundo Titulo\",\n" +
+                "      \"date\": \"2017-04-09T12:20:20\",\n" +
+                "      \"description\": \"Alguna descripcion\"\n" +
                 "    }\n" +
                 "  ]\n" +
                 "}\n";
