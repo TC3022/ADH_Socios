@@ -45,6 +45,8 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -110,8 +112,58 @@ public class MisResultadosFragment extends Fragment
     {
         View view = inflater.inflate(R.layout.fragment_mis_resultados, container, false);
         unbinder = ButterKnife.bind(this, view);
-        loadResults();
+        if (mUser.isProd()) loadResults();
+        else                loadOtherResults();
         return view;
+    }
+
+    void loadOtherResults()
+    {
+        String resp_string = "{\n" +
+                "  \"success\": true,\n" +
+                "  \"data\": {\n" +
+                "    \"weight\": [\n" +
+                "      {\n" +
+                "        \"value\": 75,\n" +
+                "        \"date\": \"2016-07-13T00:00:00\"\n" +
+                "      },\n" +
+                "      {\n" +
+                "        \"value\": 35,\n" +
+                "        \"date\": \"2016-08-13T00:00:00\"\n" +
+                "      }\n" +
+                "    ], \n" +
+                "    \"bmi\": [\n" +
+                "      {\n" +
+                "        \"value\": 125,\n" +
+                "        \"date\": \"2016-08-13T00:00:00\"\n" +
+                "      }\n" +
+                "    ], \n" +
+                "    \"fat\": [\n" +
+                "      {\n" +
+                "        \"value\": 125,\n" +
+                "        \"date\": \"2016-08-13T00:00:00\"\n" +
+                "      }\n" +
+                "    ], \n" +
+                "    \"muscle\": []\n" +
+                "  }\n" +
+                "}";
+        try
+        {
+            JSONObject response = new JSONObject(resp_string);
+            Log.d(TAG,response.toString());
+
+            UserResults ur = Parser.parseUserResultsUbiquitos(response);
+            setCombinedChart( getString(R.string.bmi) ,ur.getBmi() , gbmi );
+            setCombinedChart( getString(R.string.fat),ur.getFat() , gfat );
+            setCombinedChart( getString(R.string.muscle),ur.getMuscle() , gmuscle);
+            setCombinedChart( getString(R.string.weight),ur.getWeight() , gweight );
+
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
     void loadResults()
@@ -150,14 +202,12 @@ public class MisResultadosFragment extends Fragment
         Requester.getInstance().addToRequestQueue(setPassword);
     }
 
-    private LineData generateLineData(String t, List<ResultPackage> lrp)
+    private LineData generateLineData(String t, List<ResultPackage> lrp) //LRP NO debe estar vacio o tronara, eso se valida antes de enviar a llamar la funcion
     {
         LineData d = new LineData();
-
         ArrayList<Entry> entries = new ArrayList<Entry>();
 
         int initialYear = lrp.get(0).getDate().getYear(); // + 1900 y es la fecha real
-
         for (int j = 0; j < lrp.size() ; j++)
             entries.add(new Entry(((lrp.get(j).getDate().getYear()-initialYear)*12) + lrp.get(j).getDate().getMonth()+1, (float) lrp.get(j).getValue()));
 
@@ -218,7 +268,7 @@ public class MisResultadosFragment extends Fragment
         });
 
         CombinedData data = new CombinedData();
-        data.setData( generateLineData(s,lrp) );
+        if (!lrp.isEmpty()) data.setData( generateLineData(s,lrp) );
 
         //data.setValueTypeface(mTfLight);
         xAxis.setAxisMaximum(data.getXMax() + 1f);

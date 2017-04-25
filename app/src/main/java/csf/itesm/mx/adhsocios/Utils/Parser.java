@@ -47,7 +47,57 @@ public class Parser
             return d;
         }
     }
+    public static UserResults parseUserResultsUbiquitos(JSONObject response)
+    {
+        UserResults ur = new UserResults();
+        try
+        {
+            if ( response.getBoolean("success") )
+            {
+                JSONObject results = response.getJSONObject("data");
 
+                JSONArray weights = results.getJSONArray("weight");
+                JSONArray bmi = results.getJSONArray("bmi");
+                JSONArray fat = results.getJSONArray("fat");
+                JSONArray muscle = results.getJSONArray("muscle");
+                JSONObject current = null;
+
+                for (int i = 0; i < weights.length(); i++)
+                {
+                    current = weights.getJSONObject(i);
+                    ur.addWeight( new ResultPackage(  current.getDouble("value"),  getDateFromString(current.getString("date"),FORMAT) ));
+                }
+                for (int i = 0; i < bmi.length(); i++)
+                {
+                    current = weights.getJSONObject(i);
+                    ur.addBmi( new ResultPackage( current.getDouble("value"), getDateFromString(current.getString("date"),FORMAT) ));
+                }
+                for (int i = 0; i < fat.length(); i++)
+                {
+                    current = fat.getJSONObject(i);
+                    ur.addFat( new ResultPackage( current.getDouble("value"), getDateFromString(current.getString("date"),FORMAT) ));
+                }
+                for (int i = 0; i < muscle.length(); i++)
+                {
+                    current = muscle.getJSONObject(i);
+                    ur.addMuscle( new ResultPackage( current.getDouble("value"), getDateFromString(current.getString("date"),FORMAT) ));
+                }
+            }
+            else
+            {
+                Log.e("parseUserResults","Respuesta error del servicio");
+            }
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            return ur;
+        }
+
+    }
     public static UserResults parseUserResults(JSONArray response)
     {
         UserResults ur = new UserResults();
@@ -113,6 +163,10 @@ public class Parser
                     records.add(current);
                 }
             }
+            else
+            {
+                Log.e("UserHealthRecordParser",response.toString());
+            }
         }
         catch (JSONException e)
         {
@@ -162,6 +216,44 @@ public class Parser
         }
         return records;
 
+    }
+
+    public static List<Estudio> parseEstudiosUbiquitous(JSONObject response)
+    {
+        List<Estudio> est= new ArrayList<>();
+        try
+        {
+            if ( response.getBoolean("success") )
+            {
+                JSONArray estudios = response.getJSONArray("data");
+                Estudio current;
+                for (int i = 0; i < estudios.length(); i++)
+                {
+                    current = new Estudio();
+                    current.setName(  estudios.getJSONObject(i).getString("title") );
+                    current.setId( String.valueOf(i+1) );
+
+                    if ( estudios.getJSONObject(i).getString("date").compareTo("null") == 0  ) //Es Null, no se ha aplicado
+                        current.setApplied(null);
+                    else
+                        current.setApplied( getDateFromString( estudios.getJSONObject(i).getString("date"), FORMAT)  );
+                    est.add(current);
+                }
+            }
+            else
+            {
+                Log.e("parseEstudioUbiquitos",response.toString());
+            }
+
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            return est;
+        }
     }
 
     public static List<Estudio> parseEstudios(JSONArray response)

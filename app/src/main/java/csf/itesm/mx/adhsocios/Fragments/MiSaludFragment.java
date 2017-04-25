@@ -96,7 +96,7 @@ public class MiSaludFragment extends Fragment
         try
         {
             JSONObject response = new JSONObject(resp_string);
-            Log.d("MISALUD",response.toString());
+            Log.d(TAG,response.toString());
             mSaludAdapter.addRecords( Parser.parseUserRecordsUbiquitous(response)  );
         }
         catch (JSONException e)

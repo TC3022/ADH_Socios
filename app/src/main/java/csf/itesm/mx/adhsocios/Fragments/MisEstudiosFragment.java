@@ -18,6 +18,8 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import android.support.v4.app.Fragment;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,8 +75,38 @@ public class MisEstudiosFragment extends Fragment
         mEstudiosAdapter = new EstudiosAdapter(CONTEXT,new ArrayList<Estudio>());
         mRecyclerView.setLayoutManager( new LinearLayoutManager(CONTEXT) );
         mRecyclerView.setAdapter( mEstudiosAdapter );
-        loadEstudios();
+
+        if (mUser.isProd()) loadEstudios();
+        else                loadOtherEstudios();
+
         return view;
+    }
+
+    void loadOtherEstudios()
+    {
+        String resp_string = "{\n" +
+                "  \"success\": true,\n" +
+                "  \"data\": [\n" +
+                "    {\n" +
+                "      \"title\": \"Sangre\",\n" +
+                "      \"date\": \"2017-02-09T12:20:20\"\n" +
+                "    }, \n" +
+                "    {\n" +
+                "      \"title\": \"Ego\",\n" +
+                "      \"date\": null\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}";
+        try
+        {
+            JSONObject response = new JSONObject(resp_string);
+            Log.d(TAG,response.toString());
+            mEstudiosAdapter.addEstudio( Parser.parseEstudiosUbiquitous(response)  );
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     void loadEstudios()
