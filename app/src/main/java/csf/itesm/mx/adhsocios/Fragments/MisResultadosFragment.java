@@ -121,48 +121,6 @@ public class MisResultadosFragment extends Fragment
 
     void loadOtherResults() //TODO HACER QUE LE PEGUE AL ENDPOINT CORRECTO Y USAR EL PARSER DONDE SE DEBE
     {
-        /*
-        String resp_string = "{\n" +
-                "  \"success\": true,\n" +
-                "  \"data\": {\n" +
-                "    \"weight\": [\n" +
-                "      {\n" +
-                "        \"value\": 75,\n" +
-                "        \"date\": \"2016-07-13T00:00:00\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"value\": 35,\n" +
-                "        \"date\": \"2016-08-13T00:00:00\"\n" +
-                "      }\n" +
-                "    ], \n" +
-                "    \"bmi\": [\n" +
-                "      {\n" +
-                "        \"value\": 125,\n" +
-                "        \"date\": \"2016-08-13T00:00:00\"\n" +
-                "      }\n" +
-                "    ], \n" +
-                "    \"fat\": [\n" +
-                "      {\n" +
-                "        \"value\": 125,\n" +
-                "        \"date\": \"2016-08-13T00:00:00\"\n" +
-                "      }\n" +
-                "    ], \n" +
-                "    \"muscle\": []\n" +
-                "  }\n" +
-                "}";
-        try
-        {
-            JSONObject response = new JSONObject(resp_string);
-            Log.d(TAG,response.toString());
-
-
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
-        */
-
         String url = mUser.getHost() + String.format(ep_getResults,1,mUser.getCompanyid());
         Log.d(TAG,url);
         JsonObjectRequest getResponse = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
