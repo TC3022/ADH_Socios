@@ -27,7 +27,7 @@ import csf.itesm.mx.adhsocios.models.UserResults;
 public class Parser
 {
     public final static String FORMAT  = "yyyy-MM-dd'T'hh:mm:ss";
-
+    public final static String UBI_FORMAT  = "yyyy-MM-dd";
     public final static String ALTERNATE_FORMAT  = "dd/MM/yyyy hh:mm:ss";
 
     public static Date getDateFromString(String s, String format) //Usa el formato que nos regresa la base
@@ -65,22 +65,22 @@ public class Parser
                 for (int i = 0; i < weights.length(); i++)
                 {
                     current = weights.getJSONObject(i);
-                    ur.addWeight( new ResultPackage(  current.getDouble("value"),  getDateFromString(current.getString("date"),FORMAT) ));
+                    ur.addWeight( new ResultPackage(  current.getDouble("value"),  getDateFromString(current.getString("date"),UBI_FORMAT) ));
                 }
                 for (int i = 0; i < bmi.length(); i++)
                 {
                     current = weights.getJSONObject(i);
-                    ur.addBmi( new ResultPackage( current.getDouble("value"), getDateFromString(current.getString("date"),FORMAT) ));
+                    ur.addBmi( new ResultPackage( current.getDouble("value"), getDateFromString(current.getString("date"),UBI_FORMAT) ));
                 }
                 for (int i = 0; i < fat.length(); i++)
                 {
                     current = fat.getJSONObject(i);
-                    ur.addFat( new ResultPackage( current.getDouble("value"), getDateFromString(current.getString("date"),FORMAT) ));
+                    ur.addFat( new ResultPackage( current.getDouble("value"), getDateFromString(current.getString("date"),UBI_FORMAT) ));
                 }
                 for (int i = 0; i < muscle.length(); i++)
                 {
                     current = muscle.getJSONObject(i);
-                    ur.addMuscle( new ResultPackage( current.getDouble("value"), getDateFromString(current.getString("date"),FORMAT) ));
+                    ur.addMuscle( new ResultPackage( current.getDouble("value"), getDateFromString(current.getString("date"),UBI_FORMAT) ));
                 }
             }
             else

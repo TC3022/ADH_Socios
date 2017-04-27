@@ -19,6 +19,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -119,6 +121,7 @@ public class MisResultadosFragment extends Fragment
 
     void loadOtherResults() //TODO HACER QUE LE PEGUE AL ENDPOINT CORRECTO Y USAR EL PARSER DONDE SE DEBE
     {
+        /*
         String resp_string = "{\n" +
                 "  \"success\": true,\n" +
                 "  \"data\": {\n" +
@@ -152,18 +155,46 @@ public class MisResultadosFragment extends Fragment
             JSONObject response = new JSONObject(resp_string);
             Log.d(TAG,response.toString());
 
-            UserResults ur = Parser.parseUserResultsUbiquitos(response);
-            setCombinedChart( getString(R.string.bmi) ,ur.getBmi() , gbmi );
-            setCombinedChart( getString(R.string.fat),ur.getFat() , gfat );
-            setCombinedChart( getString(R.string.muscle),ur.getMuscle() , gmuscle);
-            setCombinedChart( getString(R.string.weight),ur.getWeight() , gweight );
 
         }
         catch (JSONException e)
         {
             e.printStackTrace();
         }
+        */
 
+        String url = mUser.getHost() + String.format(ep_getResults,1,mUser.getCompanyid());
+        Log.d(TAG,url);
+        JsonObjectRequest getResponse = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response)
+            {
+                UserResults ur = Parser.parseUserResultsUbiquitos(response);
+                setCombinedChart( getString(R.string.bmi) ,ur.getBmi() , gbmi );
+                setCombinedChart( getString(R.string.fat),ur.getFat() , gfat );
+                setCombinedChart( getString(R.string.muscle),ur.getMuscle() , gmuscle);
+                setCombinedChart( getString(R.string.weight),ur.getWeight() , gweight );
+
+            }
+        } ,new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        })
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError
+            {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Basic amF2aWVyOjEyMw=="); //BIEN NACO HARDCODEADO
+                return headers;
+            }
+        };
+
+        Requester.getInstance().addToRequestQueue(getResponse);
     }
 
     void loadResults()

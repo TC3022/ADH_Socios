@@ -1,5 +1,7 @@
 <resources>
     <string name="api_host">http://201.122.77.1:8085/api/json/</string>
+    <string name="other_host">http://ubiquitous.csf.itesm.mx/~pddm-1018057/content/proyecto/</string>
+
     <string name="app_name">All Do Healthy</string>
     <string name="username_hint">Usuario</string>
     <string name="login_button_text">Inicio de sesión</string>
