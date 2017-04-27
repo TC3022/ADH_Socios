@@ -119,9 +119,9 @@ public class MisResultadosFragment extends Fragment
         return view;
     }
 
-    void loadOtherResults() //TODO HACER QUE LE PEGUE AL ENDPOINT CORRECTO Y USAR EL PARSER DONDE SE DEBE
+    void loadOtherResults()
     {
-        String url = mUser.getHost() + String.format(ep_getResults,1,mUser.getCompanyid());
+        String url = mUser.getHost() + String.format(ep_getResults,mUser.getAssociateId(),mUser.getCompanyid());
         Log.d(TAG,url);
         JsonObjectRequest getResponse = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
