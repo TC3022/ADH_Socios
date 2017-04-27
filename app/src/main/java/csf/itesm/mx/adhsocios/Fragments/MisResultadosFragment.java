@@ -132,7 +132,6 @@ public class MisResultadosFragment extends Fragment
                 setCombinedChart( getString(R.string.fat),ur.getFat() , gfat );
                 setCombinedChart( getString(R.string.muscle),ur.getMuscle() , gmuscle);
                 setCombinedChart( getString(R.string.weight),ur.getWeight() , gweight );
-
             }
         } ,new Response.ErrorListener()
         {

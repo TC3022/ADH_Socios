@@ -16,6 +16,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -32,6 +33,7 @@ import csf.itesm.mx.adhsocios.Requester;
 import csf.itesm.mx.adhsocios.Utils.Parser;
 import csf.itesm.mx.adhsocios.models.User;
 import csf.itesm.mx.adhsocios.models.UserHealthRecord;
+import csf.itesm.mx.adhsocios.models.UserResults;
 import io.realm.Realm;
 
 public class MiSaludFragment extends Fragment
@@ -40,6 +42,7 @@ public class MiSaludFragment extends Fragment
 
     private static String TAG="MiSaludFragment";
     private Activity CONTEXT;
+
     private static final String ep_getExpediente="GetExpedienteAssociate?associateId=%s&companyId=%s";
     private RecyclerView mRecyclerView;
     private SaludAdapter mSaludAdapter;
@@ -76,33 +79,36 @@ public class MiSaludFragment extends Fragment
         return view;
     }
 
-    void loadOtherSalud() //TODO HACER QUE LE PEGUE AL ENDPOINT CORRECTO Y USAR EL PARSER DONDE SE DEBE
+    void loadOtherSalud()
     {
-        String resp_string = "{\n" +
-                "  \"success\": true,\n" +
-                "  \"data\": [\n" +
-                "    {\n" +
-                "      \"title\": \"Reflujo nasal\",\n" +
-                "      \"date\": \"2017-02-09T12:20:20\",\n" +
-                "      \"description\": \"Se te caen los mocos\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"title\": \"Segundo Titulo\",\n" +
-                "      \"date\": \"2017-04-09T12:20:20\",\n" +
-                "      \"description\": \"Alguna descripcion\"\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}\n";
-        try
+        String url = mUser.getHost() + String.format(ep_getExpediente,mUser.getAssociateId(),mUser.getCompanyid());
+        Log.d(TAG,url);
+        JsonObjectRequest getResponse = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response)
+            {
+                Log.d(TAG,response.toString());
+                mSaludAdapter.addRecords( Parser.parseUserRecordsUbiquitous(response)  );
+            }
+        } ,new Response.ErrorListener()
         {
-            JSONObject response = new JSONObject(resp_string);
-            Log.d(TAG,response.toString());
-            mSaludAdapter.addRecords( Parser.parseUserRecordsUbiquitous(response)  );
-        }
-        catch (JSONException e)
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        })
         {
-            e.printStackTrace();
-        }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError
+            {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Basic amF2aWVyOjEyMw=="); //BIEN NACO HARDCODEADO
+                return headers;
+            }
+        };
+
+        Requester.getInstance().addToRequestQueue(getResponse);
     }
 
     void loadSalud()
