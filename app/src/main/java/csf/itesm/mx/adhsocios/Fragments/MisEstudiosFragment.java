@@ -15,6 +15,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+
 import android.support.v4.app.Fragment;
 
 import org.json.JSONArray;
@@ -84,29 +86,31 @@ public class MisEstudiosFragment extends Fragment
 
     void loadOtherEstudios() //TODO HACER QUE LE PEGUE AL ENDPOINT CORRECTO Y USAR EL PARSER DONDE SE DEBE
     {
-        String resp_string = "{\n" +
-                "  \"success\": true,\n" +
-                "  \"data\": [\n" +
-                "    {\n" +
-                "      \"title\": \"Sangre\",\n" +
-                "      \"date\": \"2017-02-09T12:20:20\"\n" +
-                "    }, \n" +
-                "    {\n" +
-                "      \"title\": \"Ego\",\n" +
-                "      \"date\": null\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}";
-        try
+        String url = mUser.getHost() + String.format(ep_getEstudios,mUser.getAssociateId(),mUser.getCompanyid());
+        Log.d(TAG,url);
+        JsonObjectRequest estudiosR = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response)
+            {
+                mEstudiosAdapter.addEstudio( Parser.parseEstudiosUbiquitous(response)  );
+            }
+        },new Response.ErrorListener()
         {
-            JSONObject response = new JSONObject(resp_string);
-            Log.d(TAG,response.toString());
-            mEstudiosAdapter.addEstudio( Parser.parseEstudiosUbiquitous(response)  );
-        }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError
+            {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Basic amF2aWVyOjEyMw=="); //BIEN NACO HARDCODEADO
+                return headers;
+            }
+        };
+        Requester.getInstance().addToRequestQueue(estudiosR);
     }
 
     void loadEstudios()

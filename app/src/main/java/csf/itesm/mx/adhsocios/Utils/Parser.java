@@ -236,7 +236,7 @@ public class Parser
                     if ( estudios.getJSONObject(i).getString("date").compareTo("null") == 0  ) //Es Null, no se ha aplicado
                         current.setApplied(null);
                     else
-                        current.setApplied( getDateFromString( estudios.getJSONObject(i).getString("date"), FORMAT)  );
+                        current.setApplied( getDateFromString( estudios.getJSONObject(i).getString("date"), UBI_FORMAT)  );
                     est.add(current);
                 }
             }
