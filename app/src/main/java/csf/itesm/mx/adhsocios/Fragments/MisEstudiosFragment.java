@@ -84,7 +84,7 @@ public class MisEstudiosFragment extends Fragment
         return view;
     }
 
-    void loadOtherEstudios() //TODO HACER QUE LE PEGUE AL ENDPOINT CORRECTO Y USAR EL PARSER DONDE SE DEBE
+    void loadOtherEstudios()
     {
         String url = mUser.getHost() + String.format(ep_getEstudios,mUser.getAssociateId(),mUser.getCompanyid());
         Log.d(TAG,url);

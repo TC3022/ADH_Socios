@@ -352,7 +352,7 @@ public class LoginActivity extends AppCompatActivity
         mRealm.beginTransaction(); //Guardamos en base al usuario que pasara
             User realm_datos = mRealm.copyToRealm(user);
         mRealm.commitTransaction();
-        //TODO Algo de una encuesta?
+
         startActivity(new Intent().setClass(LoginActivity.this,MainActivity.class)); //Llamar Main
         finish();                                                                    //Y matar Login
     }

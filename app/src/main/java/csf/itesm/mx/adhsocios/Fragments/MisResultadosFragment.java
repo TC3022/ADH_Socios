@@ -52,6 +52,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +82,7 @@ public class MisResultadosFragment extends Fragment
     private static final String ep_getResults="GetMyResults?associateId=%s&companyId=%s";
     private onMisResultadosInteractionListener mListener;
     private Unbinder unbinder;
+    private Calendar mCal;
 
     private String[] mMonths;
 
@@ -106,6 +108,7 @@ public class MisResultadosFragment extends Fragment
         CONTEXT = getActivity();
         mUser = Realm.getDefaultInstance().where(User.class).findFirst();
         mMonths = getResources().getStringArray(R.array.months);
+        mCal = Calendar.getInstance();
     }
 
     @Override
@@ -195,10 +198,15 @@ public class MisResultadosFragment extends Fragment
         LineData d = new LineData();
         ArrayList<Entry> entries = new ArrayList<Entry>();
 
-        int initialYear = lrp.get(0).getDate().getYear(); // + 1900 y es la fecha real
+        mCal.setTime( lrp.get(0).getDate() );
+        int initialYear = mCal.get(Calendar.YEAR); // + 1900 y es la fecha real
+        float dayDelta = 0.0f;
         for (int j = 0; j < lrp.size() ; j++)
-            entries.add(new Entry(((lrp.get(j).getDate().getYear()-initialYear)*12) + lrp.get(j).getDate().getMonth()+1, (float) lrp.get(j).getValue()));
-
+        {
+            mCal.setTime( lrp.get(j).getDate() );
+            dayDelta =  mCal.get(Calendar.DAY_OF_MONTH)/31.0f;
+            entries.add(new Entry(((mCal.get(Calendar.YEAR)-initialYear) * 12) + mCal.get( Calendar.MONTH ) + 1 + dayDelta, (float) lrp.get(j).getValue()));
+        }
         LineDataSet set = new LineDataSet(entries, t );
         set.setColor(  ContextCompat.getColor(CONTEXT,R.color.colorAccent) );
         set.setLineWidth(2.5f);
