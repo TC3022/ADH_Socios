@@ -200,7 +200,7 @@ public class MisResultadosFragment extends Fragment
 
         mCal.setTime( lrp.get(0).getDate() );
         int initialYear = mCal.get(Calendar.YEAR); // + 1900 y es la fecha real
-        float dayDelta = 0.0f;
+        float dayDelta;
         for (int j = 0; j < lrp.size() ; j++)
         {
             mCal.setTime( lrp.get(j).getDate() );
