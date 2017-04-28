@@ -69,7 +69,7 @@ public class Parser
                 }
                 for (int i = 0; i < bmi.length(); i++)
                 {
-                    current = weights.getJSONObject(i);
+                    current = bmi.getJSONObject(i);
                     ur.addBmi( new ResultPackage( current.getDouble("value"), getDateFromString(current.getString("date"),UBI_FORMAT) ));
                 }
                 for (int i = 0; i < fat.length(); i++)
@@ -120,7 +120,7 @@ public class Parser
                 }
                 for (int i = 0; i < bmi.length(); i++)
                 {
-                    current = weights.getJSONObject(i);
+                    current = bmi.getJSONObject(i);
                     ur.addBmi( new ResultPackage( current.getDouble("Value"), getDateFromString(current.getString("Date"),FORMAT) ));
                 }
                 for (int i = 0; i < fat.length(); i++)
@@ -159,7 +159,7 @@ public class Parser
                     current = new UserHealthRecord();
                     current.setTitle( expediente.getJSONObject(i).getString("title") );
                     current.setDescription( expediente.getJSONObject(i).getString("description") );
-                    current.setDate( getDateFromString( expediente.getJSONObject(i).getString("date") ,FORMAT));
+                    current.setDate( getDateFromString( expediente.getJSONObject(i).getString("date") ,UBI_FORMAT));
                     records.add(current);
                 }
             }

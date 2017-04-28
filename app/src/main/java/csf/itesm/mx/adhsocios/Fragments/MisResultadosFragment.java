@@ -131,6 +131,7 @@ public class MisResultadosFragment extends Fragment
             public void onResponse(JSONObject response)
             {
                 UserResults ur = Parser.parseUserResultsUbiquitos(response);
+                Log.d(TAG,ur.toString());
                 setCombinedChart( getString(R.string.bmi) ,ur.getBmi() , gbmi );
                 setCombinedChart( getString(R.string.fat),ur.getFat() , gfat );
                 setCombinedChart( getString(R.string.muscle),ur.getMuscle() , gmuscle);
