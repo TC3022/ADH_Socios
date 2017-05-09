@@ -76,6 +76,9 @@ public class MisResultadosFragment extends Fragment
     @BindView(R.id.grafica_muscle) CombinedChart gmuscle;
     @BindView(R.id.grafica_weight) CombinedChart gweight;
 
+    private LineData ldGBMI, ldGFAT, ldGMUS,ldGWE;
+    private BarData lbGBMI, lbGFAT, lbGMUS,lbGWE;
+
     private User mUser;
     private Activity CONTEXT;
     private static String TAG="MisResultadosFragment";
@@ -85,6 +88,8 @@ public class MisResultadosFragment extends Fragment
     private Calendar mCal;
 
     private String[] mMonths;
+
+    private boolean gp,gimc,gm,gg; //TRUE ES BARRA, OTRO LINEA
 
     public MisResultadosFragment() {}
 
@@ -119,6 +124,34 @@ public class MisResultadosFragment extends Fragment
         unbinder = ButterKnife.bind(this, view);
         if (mUser.isProd()) loadResults();
         else                loadOtherResults();
+
+        gbmi.setOnLongClickListener(new View.OnLongClickListener()
+        {
+            @Override
+            public boolean onLongClick(View v)
+            {
+                gimc = !gimc;
+                CombinedData data = new CombinedData();
+
+                if (gimc)
+                {
+                    data.setData( lbGBMI  );
+                }
+                else
+                {
+                    data.setData( ldGBMI  );
+                }
+
+                gbmi.setData(null);
+                gbmi.invalidate();
+                gbmi.setData( data );
+                gbmi.invalidate();
+
+
+                return false;
+            }
+        });
+
         return view;
     }
 
@@ -132,10 +165,10 @@ public class MisResultadosFragment extends Fragment
             {
                 UserResults ur = Parser.parseUserResultsUbiquitos(response);
                 Log.d(TAG,ur.toString());
-                setCombinedChart( getString(R.string.bmi) ,ur.getBmi() , gbmi );
-                setCombinedChart( getString(R.string.fat),ur.getFat() , gfat );
-                setCombinedChart( getString(R.string.muscle),ur.getMuscle() , gmuscle);
-                setCombinedChart( getString(R.string.weight),ur.getWeight() , gweight );
+                setCombinedChart( getString(R.string.bmi) ,ur.getBmi() , gbmi,0 );
+                setCombinedChart( getString(R.string.weight),ur.getWeight() , gweight,1 );
+                setCombinedChart( getString(R.string.fat),ur.getFat() , gfat ,2);
+                setCombinedChart( getString(R.string.muscle),ur.getMuscle() , gmuscle,3);
             }
         } ,new Response.ErrorListener()
         {
@@ -169,10 +202,11 @@ public class MisResultadosFragment extends Fragment
             {
                 UserResults ur = Parser.parseUserResults(response);
 
-                setCombinedChart( getString(R.string.bmi) ,ur.getBmi() , gbmi );
-                setCombinedChart(getString(R.string.fat),ur.getFat() , gfat );
-                setCombinedChart(getString(R.string.muscle),ur.getMuscle() , gmuscle);
-                setCombinedChart(getString(R.string.weight),ur.getWeight() , gweight );
+                setCombinedChart( getString(R.string.bmi) ,ur.getBmi() , gbmi ,0);
+                setCombinedChart(getString(R.string.weight),ur.getWeight() , gweight ,1);
+                setCombinedChart(getString(R.string.fat),ur.getFat() , gfat ,2);
+                setCombinedChart(getString(R.string.muscle),ur.getMuscle() , gmuscle,3);
+
             }
 
         }, new Response.ErrorListener()
@@ -224,9 +258,37 @@ public class MisResultadosFragment extends Fragment
 
         return d;
     }
+    private BarData generateBarData(String t, List<ResultPackage> lrp)
+    {
+        BarData d = new BarData();
+        ArrayList<BarEntry> entries = new ArrayList<>();
+
+        mCal.setTime( lrp.get(0).getDate() );
+        int initialYear = mCal.get(Calendar.YEAR); // + 1900 y es la fecha real
+        float dayDelta;
+        for (int j = 0; j < lrp.size() ; j++)
+        {
+            mCal.setTime( lrp.get(j).getDate() );
+            dayDelta =  mCal.get(Calendar.DAY_OF_MONTH)/31.0f;
+            entries.add(new BarEntry(((mCal.get(Calendar.YEAR)-initialYear) * 12) + mCal.get( Calendar.MONTH ) + 1 + dayDelta, (float) lrp.get(j).getValue()));
+        }
+        BarDataSet set = new BarDataSet(entries, t );
+
+        set.setColors( ColorTemplate.MATERIAL_COLORS );
+        set.setDrawValues(true);
+        set.setValueTextSize(10f);
+        set.setValueTextColor(Color.rgb(0,0,0));
+
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        d.addDataSet(set);
+
+        return d;
 
 
-    private void setCombinedChart(String s, final List<ResultPackage> lrp, CombinedChart chrt)
+    }
+
+
+    private void setCombinedChart(String s, final List<ResultPackage> lrp, CombinedChart chrt, int type)
     {
         chrt.getDescription().setEnabled(false);
         chrt.setBackgroundColor(Color.WHITE);
@@ -253,6 +315,7 @@ public class MisResultadosFragment extends Fragment
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); //Only Bottom
         xAxis.setAxisMinimum(0f);
         xAxis.setGranularity(1f);
+
         xAxis.setValueFormatter(new IAxisValueFormatter()
         {
             @Override
@@ -265,7 +328,44 @@ public class MisResultadosFragment extends Fragment
         });
 
         CombinedData data = new CombinedData();
-        if (!lrp.isEmpty()) data.setData( generateLineData(s,lrp) );
+
+        if (!lrp.isEmpty())
+        {
+            LineData ld = generateLineData(s, lrp);
+            BarData bd = generateBarData(s, lrp);
+
+            switch (type)
+            {
+                case 0:
+                    ldGBMI = ld;
+                    lbGBMI = bd;
+                    gimc = true;
+                    data.setData( bd );
+                    break;
+                case 1:
+                    ldGWE = ld;
+                    lbGWE = bd;
+                    gp = true;
+                    data.setData( bd );
+                    break;
+                case 2:
+                    ldGFAT = ld;
+                    lbGFAT = bd;
+                    gg = false;
+                    data.setData( ld );
+                    break;
+                case 3:
+                    ldGMUS = ld;
+                    lbGMUS = bd;
+                    gm = false;
+                    data.setData( ld );
+                    break;
+            }
+
+
+            //
+        }
+
 
         //data.setValueTypeface(mTfLight);
         xAxis.setAxisMaximum(data.getXMax() + 1f);
