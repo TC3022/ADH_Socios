@@ -1,6 +1,8 @@
 <resources>
     <string name="api_host">http://201.122.77.1:8085/api/json/</string>
-    <string name="app_name">ADH_Socios</string>
+    <string name="other_host">http://ubiquitous.csf.itesm.mx/~pddm-1018057/content/proyecto/</string>
+
+    <string name="app_name">All Do Healthy</string>
     <string name="username_hint">User</string>
     <string name="login_button_text">Login</string>
     <string name="password_hint">Password</string>
@@ -21,9 +23,9 @@
     <string name="action_logout">Logout</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="authenticate">Authenticating...</string>
-    <string name="section01">My Results</string>
-    <string name="section02">My Health</string>
-    <string name="section03">SECTION 3</string>
+    <string name="section02">My Results</string>
+    <string name="section01">My Health</string>
+    <string name="section03">My Tests</string>
 
     <string name="msg_wrong_user_password">Wrong User/Password</string>
     <string name="mustAcceptPP">You must accept the Privacy Policy</string>
@@ -34,4 +36,33 @@
     <string name="change_password_success">Your new password was set succesfully</string>
     <string name="change_password_fail">Error changing password, contact the admin</string>
     <string name="wrong_email">Wrong email</string>
+
+    <string name="ubiquitous">Ubiquitous</string>
+
+    <string name="pendingTest">PENDING</string>
+
+    <string name="bmi">BMI</string>
+    <string name="fat">Fat</string>
+    <string name="muscle">Muscle</string>
+    <string name="weight">Weight</string>
+
+    <string name="since">since</string>
+
+
+    <string-array name="months">
+        <item>Y</item>
+        <item>Jan</item>
+        <item>Feb</item>
+        <item>Mar</item>
+        <item>Apr</item>
+        <item>May</item>
+        <item>Jun</item>
+        <item>Jul</item>
+        <item>Aug</item>
+        <item>Sep</item>
+        <item>Oct</item>
+        <item>Nov</item>
+        <item>Dec</item>
+    </string-array>
+
 </resources>

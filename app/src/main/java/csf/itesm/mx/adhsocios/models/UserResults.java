@@ -70,4 +70,23 @@ public class UserResults
     public void setWeight(List<ResultPackage> weight) {
         Weight = weight;
     }
+
+    public static String listToString(List<ResultPackage> l)
+    {
+        String result = "";
+        for (int i = 0; i < l.size(); i++)
+            result += "\n\t\t"+l.get(i).toString();
+        return result;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "UserResults{\n" +
+                "Weight=" + listToString(Weight)+
+                ",\n Bmi=" + listToString(Bmi) +
+                ",\n Fat=" + listToString(Fat) +
+                ",\n Muscle=" + listToString(Muscle) +
+                '}';
+    }
 }

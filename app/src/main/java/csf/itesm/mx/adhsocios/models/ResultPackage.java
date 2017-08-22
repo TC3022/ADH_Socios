@@ -1,5 +1,7 @@
 package csf.itesm.mx.adhsocios.models;
 
+import java.util.Date;
+
 /**
  * Created by rubcuadra on 2/20/17.
  */
@@ -7,18 +9,18 @@ package csf.itesm.mx.adhsocios.models;
 public class ResultPackage
 {
     private double value;
-    private String date;
+    private Date date;
 
-    public ResultPackage(double value, String date) {
+    public ResultPackage(double value, Date date) {
         this.value = value;
         this.date = date;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -28,5 +30,13 @@ public class ResultPackage
 
     public void setValue(double value) {
         this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "ResultPackage{" +
+                "value=" + value +
+                ", date='" + date.toString() + '\'' +
+                '}';
     }
 }

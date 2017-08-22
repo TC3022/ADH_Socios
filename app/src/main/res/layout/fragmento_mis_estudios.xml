@@ -8,7 +8,7 @@
     tools:context=".Activities.MainActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_salud"
+        android:id="@+id/recycler_estudios"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </RelativeLayout>

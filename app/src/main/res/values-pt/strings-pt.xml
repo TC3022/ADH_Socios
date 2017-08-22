@@ -1,6 +1,8 @@
 <resources>
     <string name="api_host">http://201.122.77.1:8085/api/json/</string>
-    <string name="app_name">ADH_Socios</string>
+    <string name="other_host">http://ubiquitous.csf.itesm.mx/~pddm-1018057/content/proyecto/</string>
+
+    <string name="app_name">All Do Healthy</string>
     <string name="username_hint">Usuário</string>
     <string name="login_button_text">Entrar</string>
     <string name="password_hint">Senha</string>
@@ -21,9 +23,9 @@
     <string name="action_logout">Sair</string>
     <string name="section_format">Olá mundo de seccion: %1$d</string>
     <string name="authenticate">Autenticando...</string>
-    <string name="section01">Meus Resultados</string>
-    <string name="section02">A Minha Saúde</string>
-    <string name="section03">SEÇÃO 3</string>
+    <string name="section02">Meus Resultados</string>
+    <string name="section01">A Minha Saúde</string>
+    <string name="section03">Meus Testes</string>
 
     <string name="msg_wrong_user_password">Usuário/senha errado</string>
     <string name="mustAcceptPP">Você deve aceitar a política de privacidade</string>
@@ -34,4 +36,29 @@
     <string name="change_password_success">Sua nova senha foi enviada com sucesso</string>
     <string name="change_password_fail">Erro ao alterar a senha, entre em contato com o administrador</string>
     <string name="wrong_email">E-mail errado</string>
+    <string name="ubiquitous">Ubiquitous</string>
+
+    <string name="pendingTest">PENDENTE</string>
+    <string name="bmi">IMC</string>
+    <string name="fat">Graxa</string>
+    <string name="muscle">Músculo</string>
+    <string name="weight">Peso</string>
+
+    <string name="since">desde</string>
+
+    <string-array name="months">
+        <item>Y</item>
+        <item>Jan</item>
+        <item>Fev</item>
+        <item>Mar</item>
+        <item>Abr</item>
+        <item>Mai</item>
+        <item>Jun</item>
+        <item>Jul</item>
+        <item>Ago</item>
+        <item>Set</item>
+        <item>Out</item>
+        <item>Nov</item>
+        <item>Dez</item>
+    </string-array>
 </resources>

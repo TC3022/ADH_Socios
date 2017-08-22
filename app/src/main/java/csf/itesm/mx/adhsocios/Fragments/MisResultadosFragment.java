@@ -2,11 +2,13 @@ package csf.itesm.mx.adhsocios.Fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,36 +19,91 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.github.mikephil.charting.charts.CombinedChart;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.BubbleData;
+import com.github.mikephil.charting.data.BubbleDataSet;
+import com.github.mikephil.charting.data.BubbleEntry;
+import com.github.mikephil.charting.data.CandleData;
+import com.github.mikephil.charting.data.CandleDataSet;
+import com.github.mikephil.charting.data.CandleEntry;
+import com.github.mikephil.charting.data.CombinedData;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.data.ScatterData;
+import com.github.mikephil.charting.data.ScatterDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
-import csf.itesm.mx.adhsocios.Adapters.ResultsAdapter;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import csf.itesm.mx.adhsocios.R;
 import csf.itesm.mx.adhsocios.Requester;
 import csf.itesm.mx.adhsocios.Utils.Parser;
+import csf.itesm.mx.adhsocios.models.ResultPackage;
 import csf.itesm.mx.adhsocios.models.User;
+import csf.itesm.mx.adhsocios.models.UserResults;
+import io.realm.Realm;
 
 public class MisResultadosFragment extends Fragment
 {
+    @BindView(R.id.grafica_bmi) CombinedChart gbmi;
+    @BindView(R.id.grafica_fat) CombinedChart gfat;
+    @BindView(R.id.grafica_muscle) CombinedChart gmuscle;
+    @BindView(R.id.grafica_weight) CombinedChart gweight;
+
+    private LineData ldGBMI, ldGFAT, ldGMUS,ldGWE;
+    private BarData lbGBMI, lbGFAT, lbGMUS,lbGWE;
 
     private User mUser;
     private Activity CONTEXT;
-    private RecyclerView mRecyclerView;
-    private ResultsAdapter mResultsAdapter;
     private static String TAG="MisResultadosFragment";
     private static final String ep_getResults="GetMyResults?associateId=%s&companyId=%s";
     private onMisResultadosInteractionListener mListener;
+    private Unbinder unbinder;
+    private Calendar mCal;
+
+    private String[] mMonths;
+
+    private boolean gp,gimc,gm,gg; //TRUE ES BARRA, OTRO LINEA
 
     public MisResultadosFragment() {}
 
-    public static MisResultadosFragment newInstance(User u)
+    public static MisResultadosFragment newInstance()
     {
         MisResultadosFragment fragment = new MisResultadosFragment();
-        fragment.setArguments( Parser.UserToBundle(u) );
+        //fragment.setArguments( Parser.UserToBundle(u) );
         return fragment;
+    }
+
+    @Override public void onDestroyView()
+    {
+        super.onDestroyView();
+        unbinder.unbind();
     }
 
     @Override
@@ -54,10 +111,9 @@ public class MisResultadosFragment extends Fragment
     {
         super.onCreate(savedInstanceState);
         CONTEXT = getActivity();
-        if (getArguments() != null)
-        {
-            mUser = Parser.UserFromBundle(getArguments());
-        }
+        mUser = Realm.getDefaultInstance().where(User.class).findFirst();
+        mMonths = getResources().getStringArray(R.array.months);
+        mCal = Calendar.getInstance();
     }
 
     @Override
@@ -65,25 +121,92 @@ public class MisResultadosFragment extends Fragment
                              Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_mis_resultados, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_results);
-        mResultsAdapter = new ResultsAdapter(CONTEXT,null);
-        mRecyclerView.setLayoutManager( new GridLayoutManager(CONTEXT,2) );
-        mRecyclerView.setAdapter( mResultsAdapter );
-        loadResults();
+        unbinder = ButterKnife.bind(this, view);
+        if (mUser.isProd()) loadResults();
+        else                loadOtherResults();
+
+        gbmi.setOnLongClickListener(new View.OnLongClickListener()
+        {
+            @Override
+            public boolean onLongClick(View v)
+            {
+                gimc = !gimc;
+                CombinedData data = new CombinedData();
+
+                if (gimc)
+                {
+                    data.setData( lbGBMI  );
+                }
+                else
+                {
+                    data.setData( ldGBMI  );
+                }
+
+                gbmi.setData(null);
+                gbmi.invalidate();
+                gbmi.setData( data );
+                gbmi.invalidate();
+
+
+                return false;
+            }
+        });
+
         return view;
+    }
+
+    void loadOtherResults()
+    {
+        String url = mUser.getHost() + String.format(ep_getResults,mUser.getAssociateId(),mUser.getCompanyid());
+        Log.d(TAG,url);
+        JsonObjectRequest getResponse = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response)
+            {
+                UserResults ur = Parser.parseUserResultsUbiquitos(response);
+                Log.d(TAG,ur.toString());
+                setCombinedChart( getString(R.string.bmi) ,ur.getBmi() , gbmi,0 );
+                setCombinedChart( getString(R.string.weight),ur.getWeight() , gweight,1 );
+                setCombinedChart( getString(R.string.fat),ur.getFat() , gfat ,2);
+                setCombinedChart( getString(R.string.muscle),ur.getMuscle() , gmuscle,3);
+            }
+        } ,new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                error.printStackTrace();
+            }
+        })
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError
+            {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", "Basic amF2aWVyOjEyMw=="); //BIEN NACO HARDCODEADO
+                return headers;
+            }
+        };
+
+        Requester.getInstance().addToRequestQueue(getResponse);
     }
 
     void loadResults()
     {
-
-        String url = getResources().getString(R.string.api_host) + String.format(ep_getResults,mUser.getAssociateId(),mUser.getCompanyid());
+        String url = mUser.getHost() + String.format(ep_getResults,mUser.getAssociateId(),mUser.getCompanyid());
         Log.d(TAG,url);
         JsonArrayRequest setPassword = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>()
         {
             @Override
             public void onResponse(JSONArray response)
             {
-                mResultsAdapter.setResults(Parser.parseUserResults(response));
+                UserResults ur = Parser.parseUserResults(response);
+
+                setCombinedChart( getString(R.string.bmi) ,ur.getBmi() , gbmi ,0);
+                setCombinedChart(getString(R.string.weight),ur.getWeight() , gweight ,1);
+                setCombinedChart(getString(R.string.fat),ur.getFat() , gfat ,2);
+                setCombinedChart(getString(R.string.muscle),ur.getMuscle() , gmuscle,3);
+
             }
 
         }, new Response.ErrorListener()
@@ -105,8 +228,155 @@ public class MisResultadosFragment extends Fragment
         Requester.getInstance().addToRequestQueue(setPassword);
     }
 
+    private LineData generateLineData(String t, List<ResultPackage> lrp) //LRP NO debe estar vacio o tronara, eso se valida antes de enviar a llamar la funcion
+    {
+        LineData d = new LineData();
+        ArrayList<Entry> entries = new ArrayList<Entry>();
+
+        mCal.setTime( lrp.get(0).getDate() );
+        int initialYear = mCal.get(Calendar.YEAR); // + 1900 y es la fecha real
+        float dayDelta;
+        for (int j = 0; j < lrp.size() ; j++)
+        {
+            mCal.setTime( lrp.get(j).getDate() );
+            dayDelta =  mCal.get(Calendar.DAY_OF_MONTH)/31.0f;
+            entries.add(new Entry(((mCal.get(Calendar.YEAR)-initialYear) * 12) + mCal.get( Calendar.MONTH ) + 1 + dayDelta, (float) lrp.get(j).getValue()));
+        }
+        LineDataSet set = new LineDataSet(entries, t );
+        set.setColor(  ContextCompat.getColor(CONTEXT,R.color.colorAccent) );
+        set.setLineWidth(2.5f);
+        set.setCircleColor( Color.rgb(240, 238, 70));
+        set.setCircleRadius(4f);
+        set.setFillColor(   Color.rgb(240, 238, 70));
+        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        set.setDrawValues(true);
+        set.setValueTextSize(10f);
+        set.setValueTextColor(Color.rgb(0,0,0));
+
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        d.addDataSet(set);
+
+        return d;
+    }
+    private BarData generateBarData(String t, List<ResultPackage> lrp)
+    {
+        BarData d = new BarData();
+        ArrayList<BarEntry> entries = new ArrayList<>();
+
+        mCal.setTime( lrp.get(0).getDate() );
+        int initialYear = mCal.get(Calendar.YEAR); // + 1900 y es la fecha real
+        float dayDelta;
+        for (int j = 0; j < lrp.size() ; j++)
+        {
+            mCal.setTime( lrp.get(j).getDate() );
+            dayDelta =  mCal.get(Calendar.DAY_OF_MONTH)/31.0f;
+            entries.add(new BarEntry(((mCal.get(Calendar.YEAR)-initialYear) * 12) + mCal.get( Calendar.MONTH ) + 1 + dayDelta, (float) lrp.get(j).getValue()));
+        }
+        BarDataSet set = new BarDataSet(entries, t );
+
+        set.setColors( ColorTemplate.MATERIAL_COLORS );
+        set.setDrawValues(true);
+        set.setValueTextSize(10f);
+        set.setValueTextColor(Color.rgb(0,0,0));
+
+        set.setAxisDependency(YAxis.AxisDependency.LEFT);
+        d.addDataSet(set);
+
+        return d;
+
+
+    }
+
+
+    private void setCombinedChart(String s, final List<ResultPackage> lrp, CombinedChart chrt, int type)
+    {
+        chrt.getDescription().setEnabled(false);
+        chrt.setBackgroundColor(Color.WHITE);
+        chrt.setDrawGridBackground(false);
+        chrt.setDrawBarShadow(false);
+        chrt.setHighlightFullBarEnabled(false);
+
+        Legend l = chrt.getLegend();
+        l.setWordWrapEnabled(true);
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        l.setDrawInside(false);
+
+        //AXIS
+        chrt.getAxisRight().setEnabled(false);//Quitar RIGHT
+
+        YAxis leftAxis = chrt.getAxisLeft();
+        leftAxis.setDrawGridLines(false);
+        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+
+
+        XAxis xAxis = chrt.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM); //Only Bottom
+        xAxis.setAxisMinimum(0f);
+        xAxis.setGranularity(1f);
+
+        xAxis.setValueFormatter(new IAxisValueFormatter()
+        {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis)
+            {
+                if ( value % mMonths.length == 0.0f ) //Nuestro comodin para el year
+                    return String.valueOf(lrp.get(0).getDate().getYear()+1900+  (int)(value/mMonths.length));
+                return mMonths[(int) value % mMonths.length];
+            }
+        });
+
+        CombinedData data = new CombinedData();
+
+        if (!lrp.isEmpty())
+        {
+            LineData ld = generateLineData(s, lrp);
+            BarData bd = generateBarData(s, lrp);
+
+            switch (type)
+            {
+                case 0:
+                    ldGBMI = ld;
+                    lbGBMI = bd;
+                    gimc = true;
+                    data.setData( bd );
+                    break;
+                case 1:
+                    ldGWE = ld;
+                    lbGWE = bd;
+                    gp = true;
+                    data.setData( bd );
+                    break;
+                case 2:
+                    ldGFAT = ld;
+                    lbGFAT = bd;
+                    gg = false;
+                    data.setData( ld );
+                    break;
+                case 3:
+                    ldGMUS = ld;
+                    lbGMUS = bd;
+                    gm = false;
+                    data.setData( ld );
+                    break;
+            }
+
+
+            //
+        }
+
+
+        //data.setValueTypeface(mTfLight);
+        xAxis.setAxisMaximum(data.getXMax() + 1f);
+
+        chrt.setData(data);
+        chrt.invalidate(); //Refresh
+    }
+
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(Context context)
+    {
         super.onAttach(context);
         if (context instanceof onMisResultadosInteractionListener)
         {
@@ -124,7 +394,6 @@ public class MisResultadosFragment extends Fragment
         super.onDetach();
         mListener = null;
     }
-
 
     public interface onMisResultadosInteractionListener
     {

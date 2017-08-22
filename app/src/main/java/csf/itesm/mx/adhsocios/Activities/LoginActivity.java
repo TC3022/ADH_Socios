@@ -2,15 +2,19 @@ package csf.itesm.mx.adhsocios.Activities;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.app.VoiceInteractor;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -18,6 +22,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.apradanas.simplelinkabletext.LinkableTextView;
 
 import org.json.JSONArray;
@@ -29,23 +34,18 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import csf.itesm.mx.adhsocios.R;
 import csf.itesm.mx.adhsocios.Requester;
 import csf.itesm.mx.adhsocios.models.User;
 import io.realm.Realm;
 
-//TODO CAMBIAR IDIOMA
-
-//TODO Disenar nuevas pantallas
-    //TODO Agregar Nuevas Pantallas
-
 public class LoginActivity extends AppCompatActivity
 {
-    @BindView(R.id.hyperlinkPrivacyPolicy) LinkableTextView hlink_policy;
-    @BindView(R.id.hyperlinkForgottenPwd) LinkableTextView  hlink_f_password;
     @BindView(R.id.login_username) EditText input_username;
     @BindView(R.id.login_password) EditText input_password;
-    @BindView(R.id.login_button) Button bttn_login;
+    @BindView(R.id.activity_login) ConstraintLayout mainContainer;
+    @BindView(R.id.switch1) Switch host_switch;
 
     private Realm mRealm;
 
@@ -65,151 +65,60 @@ public class LoginActivity extends AppCompatActivity
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         mRealm = Realm.getDefaultInstance();
-        setButtons();
     }
 
-    void setButtons()
+    @OnClick(R.id.login_button)
+    public void login(View v)
     {
-        bttn_login.setOnClickListener(new View.OnClickListener()
+        String username = input_username.getText().toString();
+        String password = input_password.getText().toString();
+        if ( username.length()!=0 && password.length()!=0 ) //No sabemos con que mas validar
         {
-            @Override
-            public void onClick(View v)
-            {
-                String username = input_username.getText().toString();
-                String password = input_password.getText().toString();
-                if ( username.length()!=0 && password.length()!=0 ) //No sabemos con que mas validar
-                    login(username,password);
-            }
-        });
-
-        hlink_f_password.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                final Dialog dialog = new Dialog( LoginActivity.this );
-                dialog.setContentView(R.layout.dialog_forgotten_password);
-                dialog.setTitle(getString(R.string.forgottenPwdTitle));
-
-                Button button = (Button) dialog.findViewById(R.id.bttn_dismiss_fgtPwd);
-                button.setOnClickListener(new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View view)
-                    {
-                        dialog.dismiss();
-                    }
-                });
-
-                final EditText emailEditText = (EditText) dialog.findViewById(R.id.forgottenEmail);
-                Button buttonEnviarCorreo = (Button) dialog.findViewById(R.id.bttn_send_fgtPwd);
-                buttonEnviarCorreo.setOnClickListener(new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        VerifyEmail(emailEditText.getText().toString());
-                        dialog.dismiss();
-                    }
-                });
-                dialog.show();
-            }
-        });
-        hlink_policy.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View arg0)
-            {
-                final Dialog dialog = new Dialog( LoginActivity.this );
-                dialog.setContentView(R.layout.dialog_aviso_privacidad);
-                dialog.setTitle( getResources().getString(R.string.privacyPolicyTitle) );
-                Button button = (Button) dialog.findViewById(R.id.bttn_closePrivacyPolicy);
-                Button button2 = (Button) dialog.findViewById(R.id.bttn_acceptPrivacyPolicy);
-                View.OnClickListener dms = new View.OnClickListener() {@Override public void onClick(View view){dialog.dismiss();}};
-                button.setOnClickListener(dms);
-                button2.setOnClickListener(dms);
-                dialog.show();
-            }
-        });
+            if (host_switch.isChecked()) //Usar Ubiquitos
+                otherLogin(username,password);
+            else
+                login(username, password);
+        }
     }
-    public void login(String username,String password)
+    public void otherLogin(String uName,String uPass)
     {
-        String authenticate = getResources().getString(R.string.authenticate);
-
         final ProgressDialog pdia = new ProgressDialog(LoginActivity.this);
-        pdia.setMessage(authenticate);
+        pdia.setMessage(getResources().getString(R.string.authenticate));
         pdia.show();
 
-        String url = getResources().getString(R.string.api_host) + String.format(ep_getLogin,username,password);
+        String url = getResources().getString(R.string.other_host) + String.format(ep_getLogin,uName,uPass);
         Log.d(TAG,url);
-        JsonArrayRequest preResetPwd = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+        JsonObjectRequest loginR = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>()
+        {
             @Override
-            public void onResponse(JSONArray response)
+            public void onResponse(JSONObject response)
             {
                 try
                 {
-                    JSONObject codes = response.getJSONObject(0);
-                    if (codes.getString("Code").equals("01")) //Fue exitoso y se puede logear
+                    if (response.getBoolean("success"))
                     {
-                        JSONObject data1 = response.getJSONObject(1);
-                        JSONObject data2 = response.getJSONObject(2);
-
-                        Boolean noticePrivacyFlag = data2.getBoolean("NoticePrivacyFlag");
+                        JSONObject data = response.getJSONObject("data");
 
                         final User datos_usuario = new User();
-                        datos_usuario.setFirtname( data2.getString("FirstName") );
-                        datos_usuario.setLastname( data2.getString("LastName") );
-                        datos_usuario.setEstatura( data2.getDouble("Stature") );
-                        datos_usuario.setGender(data2.getString("Gender") );
-                        datos_usuario.setCompanyid( data2.getLong("CompanyId"));
-                        datos_usuario.setAssociateimage( data2.getString("AssociateImage"));
-                        datos_usuario.setAssociateId( data2.getString("AssociateId"));
-                        datos_usuario.setNmComplete( datos_usuario.getFirtname()+" "+datos_usuario.getLastname() );
+                        datos_usuario.setFirtname( data.getString("firstname") );
+                        datos_usuario.setLastname( data.getString("lastname") );
                         datos_usuario.setLogged(true);
+                        datos_usuario.setProd( false );
+                        datos_usuario.setHost( getResources().getString(R.string.other_host) );
+                        datos_usuario.setNmComplete( datos_usuario.getFirtname()+" "+datos_usuario.getLastname() );
+                        datos_usuario.setAssociateId( data.getString("id"));
 
-                        if (noticePrivacyFlag)
-                        {
-                            grantAccess(datos_usuario);
-                        }
-                        else
-                        {
-                            Toast.makeText(LoginActivity.this,getString(R.string.mustAcceptPP),Toast.LENGTH_SHORT).show();
-                            //AQUI LE MOSTRAREMOS EL AVISO DE PRIVACIDAD
-                            //SI LO ACEPTA LE DEBEMOS DECIR AL API QUE UPDATEE ESA BANDERA
-                            final Dialog dialog = new Dialog( LoginActivity.this );
-                            dialog.setContentView(R.layout.dialog_aviso_privacidad);
-                            dialog.setTitle( getResources().getString(R.string.privacyPolicyTitle) );
+//                        datos_usuario.setEstatura( data2.getDouble("Stature") );
+//                        datos_usuario.setGender(data2.getString("Gender") );
+//                        datos_usuario.setCompanyid( data2.getLong("CompanyId"));
+//                        datos_usuario.setAssociateimage( data2.getString("AssociateImage"));
 
-                            Button dismiss = (Button) dialog.findViewById(R.id.bttn_closePrivacyPolicy);
-                            dismiss.setOnClickListener(new View.OnClickListener()
-                            {
-                                @Override
-                                public void onClick(View view)
-                                {
-                                    dialog.dismiss();
-                                }
-                            });
-
-                            Button accept = (Button) dialog.findViewById(R.id.bttn_closePrivacyPolicy);
-                            accept.setOnClickListener(new View.OnClickListener()
-                            {
-                                @Override
-                                public void onClick(View v)
-                                {
-                                    //Cambia en base el status a aceptado y lo deja pasar
-                                    dialog.dismiss();
-                                    changePrivacyPolicyStatus( datos_usuario.getAssociateId(),datos_usuario.getCompanyid(),true);
-                                    grantAccess(datos_usuario);
-                                }
-                            });
-                            dialog.show();
-                        }
+                        grantAccess(datos_usuario);
                     }
                     else
                     {
-                        Toast.makeText(LoginActivity.this, getString( R.string.msg_wrong_user_password ),Toast.LENGTH_LONG).show();
+                        Snackbar.make(mainContainer,response.getString("msg"),Snackbar.LENGTH_SHORT).show();
                     }
-
                 }
                 catch (Exception e)
                 {
@@ -220,8 +129,7 @@ public class LoginActivity extends AppCompatActivity
                     pdia.dismiss();
                 }
             }
-
-        }, new Response.ErrorListener()
+        },new Response.ErrorListener()
         {
             @Override
             public void onErrorResponse(VolleyError error)
@@ -238,7 +146,166 @@ public class LoginActivity extends AppCompatActivity
                 return headers;
             }
         };
-        Requester.getInstance().addToRequestQueue(preResetPwd);
+
+        Requester.getInstance().addToRequestQueue(loginR);
+    }
+
+    @OnClick(R.id.hyperlinkForgottenPwd)
+    public void forgottenPwd(View v)
+    {
+        final Dialog dialog = new Dialog( LoginActivity.this );
+        dialog.setContentView(R.layout.dialog_forgotten_password);
+        dialog.setTitle(getString(R.string.forgottenPwdTitle));
+
+        Button button = (Button) dialog.findViewById(R.id.bttn_dismiss_fgtPwd);
+        button.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                dialog.dismiss();
+            }
+        });
+
+        final EditText emailEditText = (EditText) dialog.findViewById(R.id.forgottenEmail);
+        Button buttonEnviarCorreo = (Button) dialog.findViewById(R.id.bttn_send_fgtPwd);
+        buttonEnviarCorreo.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                VerifyEmail(emailEditText.getText().toString());
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    @OnClick(R.id.hyperlinkPrivacyPolicy)
+    public void showPrivacyPolicy(View v)
+    {
+        final Dialog dialog = new Dialog( LoginActivity.this );
+        dialog.setContentView(R.layout.dialog_aviso_privacidad);
+        dialog.setTitle( getResources().getString(R.string.privacyPolicyTitle) );
+        Button button = (Button) dialog.findViewById(R.id.bttn_closePrivacyPolicy);
+        Button button2 = (Button) dialog.findViewById(R.id.bttn_acceptPrivacyPolicy);
+        View.OnClickListener dms = new View.OnClickListener() {@Override public void onClick(View view){dialog.dismiss();}};
+        button.setOnClickListener(dms);
+        button2.setOnClickListener(dms);
+        dialog.show();
+    }
+
+    public void login(String username,String password)
+    {
+        final ProgressDialog pdia = new ProgressDialog(LoginActivity.this);
+        pdia.setMessage(getResources().getString(R.string.authenticate));
+        pdia.show();
+
+        String url = getResources().getString(R.string.api_host) + String.format(ep_getLogin,username,password);
+        Log.d(TAG,url);
+        JsonArrayRequest loginRequest = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response)
+            {
+                try
+                {
+                    JSONObject codes = response.getJSONObject(0);
+                    if (codes.getString("Code").equals("01")) //Fue exitoso y se puede logear
+                    {
+                        Log.d("LOGIN",response.toString());
+                        JSONObject data1 = response.getJSONObject(1);
+                        JSONObject data2 = response.getJSONObject(2);
+                        Boolean noticePrivacyFlag = data2.getBoolean("NoticePrivacyFlag");
+
+                        final User datos_usuario = new User();
+                        datos_usuario.setFirtname( data2.getString("FirstName") );
+                        datos_usuario.setLastname( data2.getString("LastName") );
+                        datos_usuario.setEstatura( data2.getDouble("Stature") );
+                        datos_usuario.setGender(data2.getString("Gender") );
+                        datos_usuario.setCompanyid( data2.getLong("CompanyId"));
+                        datos_usuario.setAssociateimage( data2.getString("AssociateImage"));
+                        datos_usuario.setAssociateId( data2.getString("AssociateId"));
+                        datos_usuario.setNmComplete( datos_usuario.getFirtname()+" "+datos_usuario.getLastname() );
+                        datos_usuario.setLogged(true);
+
+                        datos_usuario.setProd( true );
+                        datos_usuario.setHost( getResources().getString(R.string.api_host) );
+
+
+                        //PreferenceManager.getDefaultSharedPreferences(LoginActivity.this).edit().putString("token", response.getString("token")).apply();
+
+                            if (noticePrivacyFlag)
+                            {
+                                grantAccess(datos_usuario);
+                            }
+                            else
+                            {
+                                Toast.makeText(LoginActivity.this,getString(R.string.mustAcceptPP),Toast.LENGTH_SHORT).show();
+                                //AQUI LE MOSTRAREMOS EL AVISO DE PRIVACIDAD
+                                //SI LO ACEPTA LE DEBEMOS DECIR AL API QUE UPDATEE ESA BANDERA
+                                final Dialog dialog = new Dialog( LoginActivity.this );
+                                dialog.setContentView(R.layout.dialog_aviso_privacidad);
+                                dialog.setTitle( getResources().getString(R.string.privacyPolicyTitle) );
+
+                                Button dismiss = (Button) dialog.findViewById(R.id.bttn_closePrivacyPolicy);
+                                dismiss.setOnClickListener(new View.OnClickListener()
+                                {
+                                    @Override
+                                    public void onClick(View view)
+                                    {
+                                        dialog.dismiss();
+                                    }
+                                });
+
+                                Button accept = (Button) dialog.findViewById(R.id.bttn_closePrivacyPolicy);
+                                accept.setOnClickListener(new View.OnClickListener()
+                                {
+                                    @Override
+                                    public void onClick(View v)
+                                    {
+                                        //Cambia en base el status a aceptado y lo deja pasar
+                                        dialog.dismiss();
+                                        changePrivacyPolicyStatus( datos_usuario.getAssociateId(),datos_usuario.getCompanyid(),true);
+                                        grantAccess(datos_usuario);
+                                    }
+                                });
+                                dialog.show();
+                            }
+                        }
+                        else
+                        {
+                            Toast.makeText(LoginActivity.this, getString( R.string.msg_wrong_user_password ),Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                    finally
+                    {
+                        pdia.dismiss();
+                    }
+                }
+
+            }, new Response.ErrorListener()
+            {
+                @Override
+                public void onErrorResponse(VolleyError error)
+                {
+                    error.printStackTrace();
+                    pdia.dismiss();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError
+                {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Authorization", "Basic amF2aWVyOjEyMw=="); //BIEN NACO HARDCODEADO
+                    return headers;
+                }
+            };
+            Requester.getInstance().addToRequestQueue(loginRequest);
     }
     public void changePrivacyPolicyStatus(String associateId,long companyid,boolean privacyFlag)
     {
@@ -285,7 +352,7 @@ public class LoginActivity extends AppCompatActivity
         mRealm.beginTransaction(); //Guardamos en base al usuario que pasara
             User realm_datos = mRealm.copyToRealm(user);
         mRealm.commitTransaction();
-        //TODO El codigo pide que le hagamos una encuesta pero nel
+
         startActivity(new Intent().setClass(LoginActivity.this,MainActivity.class)); //Llamar Main
         finish();                                                                    //Y matar Login
     }

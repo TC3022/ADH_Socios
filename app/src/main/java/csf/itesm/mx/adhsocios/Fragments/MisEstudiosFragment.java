@@ -2,22 +2,22 @@ package csf.itesm.mx.adhsocios.Fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.gson.Gson;
+
+import android.support.v4.app.Fragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,34 +25,37 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import csf.itesm.mx.adhsocios.Adapters.SaludAdapter;
+import csf.itesm.mx.adhsocios.Adapters.EstudiosAdapter;
 import csf.itesm.mx.adhsocios.R;
 import csf.itesm.mx.adhsocios.Requester;
 import csf.itesm.mx.adhsocios.Utils.Parser;
+import csf.itesm.mx.adhsocios.models.Estudio;
 import csf.itesm.mx.adhsocios.models.User;
-import csf.itesm.mx.adhsocios.models.UserHealthRecord;
-import csf.itesm.mx.adhsocios.models.UserResults;
 import io.realm.Realm;
 
-public class MiSaludFragment extends Fragment
+/**
+ * Created by rubcuadra on 4/22/17.
+ */
+
+public class MisEstudiosFragment extends Fragment
 {
     private User mUser;
 
-    private static String TAG="MiSaludFragment";
+    private static String TAG="MisEstudiosFragment";
     private Activity CONTEXT;
-
-    private static final String ep_getExpediente="GetExpedienteAssociate?associateId=%s&companyId=%s";
+    private static final String ep_getEstudios="GetControlChecKAssociate?associateId=%s&companyId=%s";
     private RecyclerView mRecyclerView;
-    private SaludAdapter mSaludAdapter;
-    private OnMiSaludInteractionListener mListener;
+    private EstudiosAdapter mEstudiosAdapter;
+    private OnMisEstudiosInteractionListener mListener;
 
-    public MiSaludFragment() {}
+    public MisEstudiosFragment() {}
 
-    public static MiSaludFragment newInstance()
+    public static MisEstudiosFragment newInstance()
     {
-        MiSaludFragment fragment = new MiSaludFragment();
+        MisEstudiosFragment fragment = new MisEstudiosFragment();
         //fragment.setArguments( Parser.UserToBundle(u) );
         return fragment;
     }
@@ -69,36 +72,36 @@ public class MiSaludFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.fragment_mi_salud, container, false);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_salud);
-        mSaludAdapter = new SaludAdapter(CONTEXT,new ArrayList<UserHealthRecord>());
+        View view = inflater.inflate(R.layout.fragmento_mis_estudios, container, false);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_estudios);
+        mEstudiosAdapter = new EstudiosAdapter(CONTEXT,new ArrayList<Estudio>());
         mRecyclerView.setLayoutManager( new LinearLayoutManager(CONTEXT) );
-        mRecyclerView.setAdapter( mSaludAdapter );
-        if (mUser.isProd()) loadSalud();
-        else                loadOtherSalud();
+        mRecyclerView.setAdapter( mEstudiosAdapter );
+
+        if (mUser.isProd()) loadEstudios();
+        else                loadOtherEstudios();
+
         return view;
     }
 
-    void loadOtherSalud()
+    void loadOtherEstudios()
     {
-        String url = mUser.getHost() + String.format(ep_getExpediente,mUser.getAssociateId(),mUser.getCompanyid());
+        String url = mUser.getHost() + String.format(ep_getEstudios,mUser.getAssociateId(),mUser.getCompanyid());
         Log.d(TAG,url);
-        JsonObjectRequest getResponse = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest estudiosR = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response)
             {
-                Log.d(TAG,response.toString());
-                mSaludAdapter.addRecords( Parser.parseUserRecordsUbiquitous(response)  );
+                mEstudiosAdapter.addEstudio( Parser.parseEstudiosUbiquitous(response)  );
             }
-        } ,new Response.ErrorListener()
+        },new Response.ErrorListener()
         {
             @Override
             public void onErrorResponse(VolleyError error)
             {
                 error.printStackTrace();
             }
-        })
-        {
+        }) {
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError
             {
@@ -107,21 +110,19 @@ public class MiSaludFragment extends Fragment
                 return headers;
             }
         };
-
-        Requester.getInstance().addToRequestQueue(getResponse);
+        Requester.getInstance().addToRequestQueue(estudiosR);
     }
 
-    void loadSalud()
+    void loadEstudios()
     {
-        String url = mUser.getHost() + String.format(ep_getExpediente,mUser.getAssociateId(),mUser.getCompanyid());
+        String url = mUser.getHost() + String.format(ep_getEstudios,mUser.getAssociateId(),mUser.getCompanyid());
         Log.d(TAG,url);
-
         JsonArrayRequest setPassword = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>()
         {
             @Override
             public void onResponse(JSONArray response)
             {
-                mSaludAdapter.addRecords( Parser.parseUserRecords(response) );
+                mEstudiosAdapter.addEstudio( Parser.parseEstudios(response) );
             }
 
         }, new Response.ErrorListener()
@@ -144,11 +145,12 @@ public class MiSaludFragment extends Fragment
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(Context context)
+    {
         super.onAttach(context);
-        if (context instanceof OnMiSaludInteractionListener)
+        if (context instanceof OnMisEstudiosInteractionListener)
         {
-            mListener = (OnMiSaludInteractionListener) context;
+            mListener = (OnMisEstudiosInteractionListener) context;
         } else
         {
             throw new RuntimeException(context.toString()
@@ -163,8 +165,8 @@ public class MiSaludFragment extends Fragment
         mListener = null;
     }
 
-    public interface OnMiSaludInteractionListener
+    public interface OnMisEstudiosInteractionListener
     {
-        void OnMiSaludInteraction(Uri uri);
+        void OnMisEstudiosInteraction();
     }
 }

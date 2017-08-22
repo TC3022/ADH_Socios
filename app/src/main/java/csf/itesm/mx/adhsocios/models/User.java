@@ -22,9 +22,12 @@ public class User extends RealmObject //Se llamaba Datos_Model en la otra activi
     private String NmComplete;
     private boolean Logged;
 
-    public User(){};
+    private String host;
+    private boolean prod;
 
-    public User(int id, String firtname, String lastname, double estatura, String gender, long companyid, String associateimage, String associateId, String nmComplete, boolean logged)
+    public User(){}
+
+    public User(int id, String firtname, String lastname, double estatura, String gender, long companyid, String associateimage, String associateId, String nmComplete, boolean logged,String host,boolean prod)
     {
         this.id = id;
         Firtname = firtname;
@@ -36,6 +39,8 @@ public class User extends RealmObject //Se llamaba Datos_Model en la otra activi
         AssociateId = associateId;
         NmComplete = nmComplete;
         Logged = logged;
+        this.host = host;
+        this.prod = prod;
     }
 
     public boolean isLogged() {
@@ -116,5 +121,21 @@ public class User extends RealmObject //Se llamaba Datos_Model en la otra activi
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public boolean isProd() {
+        return prod;
+    }
+
+    public void setProd(boolean prod) {
+        this.prod = prod;
     }
 }
